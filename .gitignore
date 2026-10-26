@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Blender and generated project outputs
+*.blend1
+*_rig_setup.json
+*_goldsrc_compatibility_report.json
+*_co_op_forge_project.zip
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local test artifacts
+.coverage
+htmlcov/

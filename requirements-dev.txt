@@ -1,0 +1,2 @@
+# Runtime app and validation use Python's standard library only.
+# Node.js is used by scripts/validate_project.py to syntax-check embedded JavaScript.

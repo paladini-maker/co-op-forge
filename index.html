@@ -1,0 +1,1228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0d1113" />
+<title>Co-Op Forge — Player Rig Studio</title>
+<style>
+  :root{--bg:#0d1113;--panel:#151b1e;--panel2:#1b2326;--line:#2a3538;--muted:#91a0a3;--text:#e8efed;--lime:#c7f36b;--lime2:#a7d84c;--cyan:#50d8de;--yellow:#f3d463;--green:#65df9b;--pink:#ef7cdb;--orange:#ffa45f;--shadow:0 18px 50px rgba(0,0,0,.24)}
+  *{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif} button,input,select{font:inherit} button{cursor:pointer} .app{min-height:100vh;display:grid;grid-template-rows:62px 1fr}
+  .topbar{display:flex;align-items:center;gap:20px;padding:0 22px;border-bottom:1px solid var(--line);background:#111719;position:sticky;top:0;z-index:10}.brand{display:flex;align-items:center;gap:11px;min-width:228px}.brandmark{width:30px;height:30px;border-radius:9px;background:var(--lime);display:grid;place-items:center;color:#10150a;font-weight:900;font-size:16px;box-shadow:0 0 20px #c7f36b1c}.brandtitle{font-size:14px;font-weight:800;letter-spacing:.04em}.brandtitle small{display:block;color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.17em;margin-top:1px}.crumb{color:var(--muted);font-size:12px}.crumb strong{color:var(--text);font-weight:600}.top-spacer{flex:1}.chip{border:1px solid var(--line);background:#151d1f;border-radius:999px;padding:7px 10px;color:#b5c1c1;font-size:11px;white-space:nowrap}.chip .dot{display:inline-block;width:6px;height:6px;border-radius:99px;background:var(--lime);margin-right:6px}.avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#394548;color:#dbe6e2;font-weight:700;font-size:11px}
+  .layout{display:grid;grid-template-columns:220px minmax(420px,1fr) 322px;min-height:calc(100vh - 62px)}
+  .sidebar{border-right:1px solid var(--line);background:#111719;padding:18px 12px;display:flex;flex-direction:column;gap:22px}.workspace-label{padding:0 10px;color:#718083;font-size:10px;font-weight:800;letter-spacing:.15em}.nav{display:grid;gap:4px}.nav button{border:0;background:transparent;color:#98a6a8;border-radius:9px;padding:10px 11px;display:flex;align-items:center;gap:11px;text-align:left}.nav button .ico{width:20px;text-align:center;font-size:15px}.nav button.active{background:#283324;color:var(--lime);box-shadow:inset 2px 0 var(--lime)}.nav button:hover:not(.active){background:#1a2225;color:#dce5e3}.sidebar-card{margin-top:auto;padding:13px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,#192123,#13191b)}.sidebar-card .eyebrow{font-size:10px;color:var(--lime);text-transform:uppercase;font-weight:800;letter-spacing:.12em}.sidebar-card strong{display:block;margin:8px 0 5px;font-size:13px}.sidebar-card p{color:var(--muted);font-size:11px;line-height:1.55;margin:0 0 12px}.smalllink{background:transparent;border:0;padding:0;color:var(--lime);font-size:11px;font-weight:700}
+  .main{min-width:0;padding:23px 24px 20px;display:flex;flex-direction:column;gap:17px}.heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.kicker{font-size:10px;color:var(--lime);letter-spacing:.17em;text-transform:uppercase;font-weight:800}.heading h1{font-size:24px;line-height:1.15;margin:6px 0 7px;letter-spacing:-.035em}.heading p{margin:0;color:var(--muted);font-size:12px;max-width:510px}.heading-actions{display:flex;gap:8px;flex-shrink:0}.btn{border:1px solid var(--line);border-radius:8px;background:#1a2325;color:#cbd5d3;padding:9px 12px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.15s}.btn:hover{border-color:#506064;background:#202b2e}.btn.primary{background:var(--lime);color:#17200a;border-color:var(--lime)}.btn.primary:hover{background:#d5ff82}.btn.ghost{background:transparent}.btn:disabled{opacity:.4;cursor:not-allowed}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.step{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;background:#121819;padding:10px 12px;min-width:0}.step.active{border-color:#617c3d;background:#202a1c}.step.done .num{background:var(--lime);color:#17200a}.num{width:22px;height:22px;flex-shrink:0;border-radius:7px;background:#273134;display:grid;place-items:center;color:#a5b3b1;font-weight:800;font-size:11px}.step.active .num{background:var(--lime);color:#17200a}.step strong{font-size:11px;display:block;white-space:nowrap}.step small{font-size:10px;color:var(--muted);display:block;margin-top:1px;white-space:nowrap}
+  .viewer-shell{min-height:450px;flex:1;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#101617;box-shadow:var(--shadow)}.viewer-toolbar{height:45px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid #242f32;background:#151d1f}.viewer-label{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:800;letter-spacing:.09em;color:#c4d0ce}.tiny-dot{width:6px;height:6px;border-radius:99px;background:var(--lime)}.view-tools{display:flex;gap:5px}.icon-btn{width:28px;height:26px;display:grid;place-items:center;color:#a5b3b1;background:#20292b;border:1px solid #303b3d;border-radius:6px;font-size:12px}.icon-btn.selected{color:var(--lime);border-color:#52683a}.viewport{position:relative;min-height:370px;flex:1;overflow:hidden;background-color:#121819;background-image:linear-gradient(#27303244 1px,transparent 1px),linear-gradient(90deg,#27303244 1px,transparent 1px),radial-gradient(ellipse at 50% 43%,#263235 0%,#171f21 49%,#101516 100%);background-size:28px 28px,28px 28px,100% 100%;display:flex;align-items:center;justify-content:center}.viewport::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent calc(50% - .5px),#8290914d 50%,transparent calc(50% + .5px)),linear-gradient(0deg,transparent 75%,#82909112 75.2%,transparent 75.4%)}#rigSvg{position:relative;z-index:1;width:min(100%,620px);height:100%;min-height:370px;max-height:510px;touch-action:none;overflow:visible}.floor-line{stroke:#5e6d70;stroke-width:1;stroke-dasharray:3 7;opacity:.5}.silhouette{fill:#68777a;stroke:#9aa9a8;stroke-opacity:.32;stroke-width:1.5}.silhouette-shadow{fill:#0b1011;opacity:.45}.bone{stroke:#dbe6dc;stroke-width:3;stroke-linecap:round;opacity:.75}.bone.minor{stroke:#a8b6b4;stroke-width:2;opacity:.6}.joint-dot{cursor:grab;stroke:#101516;stroke-width:2.5;filter:drop-shadow(0 0 7px #0008)}.joint-dot:active{cursor:grabbing}.joint-dot.focus{stroke:#fff;stroke-width:3.8;filter:drop-shadow(0 0 8px #ffffff80)}.joint-label{font-size:9px;fill:#e8efed;paint-order:stroke;stroke:#101516;stroke-width:3px;stroke-linejoin:round;pointer-events:none;font-weight:800;letter-spacing:.04em}.viewer-corner{position:absolute;z-index:3;font-size:9px;font-weight:800;letter-spacing:.13em;color:#7b898b}.viewer-corner.top-left{top:16px;left:16px}.viewer-corner.bottom-left{bottom:14px;left:16px}.viewer-corner.bottom-right{bottom:14px;right:16px;text-align:right}.legend-strip{display:flex;flex-wrap:wrap;gap:12px;padding:11px 14px;border-top:1px solid #263033;background:#141b1d}.legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:#aebbb9}.legend-color{width:7px;height:7px;border-radius:50%}.statusline{display:flex;justify-content:space-between;align-items:center;padding:0 2px;color:#7d8d8e;font-size:10px;gap:12px}.statusline strong{color:#bdc9c6;font-weight:600}
+  #meshCanvas{position:absolute;inset:0;width:100%;height:100%;display:none;z-index:2;touch-action:none;cursor:grab;outline:none}#meshCanvas:active{cursor:grabbing}.mesh-hint{position:absolute;z-index:3;top:42px;right:14px;max-width:190px;padding:7px 9px;border-radius:7px;background:#111719d9;border:1px solid #334043;color:#aebbb9;font-size:9px;line-height:1.5;pointer-events:none}.analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.analysis-stat{padding:9px;background:#111719;border:1px solid #2b3638;border-radius:7px;min-width:0}.analysis-stat strong{display:block;color:#e7efed;font-size:14px;font-variant-numeric:tabular-nums}.analysis-stat span{display:block;color:#849394;font-size:9px;margin-top:3px}.analysis-warning{font-size:10px;line-height:1.5;color:#bdc9c6;padding:8px 9px;border-left:2px solid var(--yellow);background:#22231c;margin-top:7px;overflow-wrap:anywhere}.analysis-warning.error{border-left-color:#f28d7d;background:#271d1b}.analysis-warning.ok{border-left-color:var(--green);background:#19231e}.mesh-settings{display:grid;gap:9px;margin-top:10px}.mesh-settings select{width:100%;border:1px solid #344144;border-radius:7px;background:#111719;color:#e2eae7;padding:8px;font-size:10px}.mesh-settings label{display:flex;align-items:center;gap:7px;font-size:10px;color:#a9b6b5}.mesh-settings input{accent-color:var(--lime)}
+  .inspector{border-left:1px solid var(--line);background:#111719;padding:17px 16px 22px;display:flex;flex-direction:column;gap:14px;min-width:0}.panel{border:1px solid var(--line);background:#151c1f;border-radius:11px;overflow:hidden}.panel-head{padding:12px 13px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #293437}.panel-head strong{font-size:12px}.panel-head span{font-size:10px;color:var(--muted)}.panel-body{padding:13px}.dropzone{border:1px dashed #465558;border-radius:9px;background:#111719;padding:16px 12px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;transition:.15s}.dropzone.dragover{border-color:var(--lime);background:#202a1b}.uploadicon{height:31px;width:31px;border-radius:9px;background:#283324;color:var(--lime);display:grid;place-items:center;font-size:16px}.dropzone strong{font-size:11px}.dropzone p{margin:0;color:var(--muted);font-size:10px;line-height:1.45}.dropzone input{display:none}.filetypes{font-size:9px;color:#728183;line-height:1.5}.filecard{display:none;align-items:center;gap:9px;margin-top:9px;background:#111719;border:1px solid #2b3638;border-radius:8px;padding:9px}.filebadge{width:30px;height:30px;flex-shrink:0;background:#283324;color:var(--lime);border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900}.filemeta{min-width:0;flex:1}.filemeta strong{display:block;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.filemeta span{display:block;font-size:9px;color:var(--muted);margin-top:3px}.removefile{border:0;background:transparent;color:#809092;font-size:14px;padding:3px}.field{display:grid;gap:6px;margin-bottom:12px}.field:last-child{margin-bottom:0}.field label{display:flex;align-items:center;justify-content:space-between;color:#a9b6b5;font-size:10px;font-weight:700}.field label span{font-size:9px;color:#758486;font-weight:500}.field select,.field input[type=text],.field input[type=number]{width:100%;border:1px solid #344144;border-radius:7px;background:#111719;color:#e2eae7;padding:9px 10px;outline:0;font-size:11px}.field select:focus,.field input:focus{border-color:#8eae51}.field select option{background:#111719}.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:3px 0}.toggle-row strong{display:block;font-size:10px}.toggle-row small{display:block;color:var(--muted);font-size:9px;margin-top:3px}.switch{position:relative;width:34px;height:19px;flex-shrink:0}.switch input{display:none}.switch span{position:absolute;inset:0;border-radius:999px;background:#354144;transition:.2s;cursor:pointer}.switch span:before{content:"";position:absolute;width:13px;height:13px;left:3px;top:3px;border-radius:50%;background:#9eacab;transition:.2s}.switch input:checked+span{background:#6b8b3d}.switch input:checked+span:before{transform:translateX(15px);background:var(--lime)}.joint-list{display:grid;gap:3px}.joint-row{display:flex;align-items:center;gap:8px;padding:7px;border-radius:6px;border:1px solid transparent;background:transparent;color:#b6c2bf;text-align:left;width:100%}.joint-row:hover{background:#1d2628}.joint-row.active{border-color:#3b494b;background:#20292b}.joint-row .j-color{width:8px;height:8px;border-radius:50%;flex-shrink:0}.joint-row .j-name{font-size:10px;flex:1}.joint-row .j-coord{font-size:9px;color:#7e8d8e;font-variant-numeric:tabular-nums}.panel-foot{padding:10px 13px;border-top:1px solid #293437;display:flex;justify-content:space-between;align-items:center}.text-btn{border:0;background:transparent;color:var(--lime);font-size:10px;font-weight:800;padding:4px 0}.full{width:100%}.run-panel{padding:13px;border:1px solid #40532e;background:linear-gradient(135deg,#20291c,#151e1d);border-radius:11px}.run-panel h3{margin:0 0 5px;font-size:12px}.run-panel p{margin:0 0 12px;color:#9cab9a;font-size:10px;line-height:1.5}.run-panel .btn{width:100%;padding:11px}.notice{display:flex;gap:8px;padding:10px;background:#171f21;border:1px solid #2b383a;border-radius:8px;color:#879797;font-size:9px;line-height:1.5}.notice .i{color:var(--yellow);font-weight:900}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,16px);opacity:0;pointer-events:none;z-index:30;border:1px solid #43523a;background:#202a1c;border-radius:9px;padding:11px 15px;color:#e5f0df;font-size:11px;box-shadow:var(--shadow);transition:.2s;max-width:calc(100vw - 30px)}.toast.show{opacity:1;transform:translate(-50%,0)}.modal-backdrop{position:fixed;inset:0;background:#0009;z-index:25;display:none;align-items:center;justify-content:center;padding:20px}.modal-backdrop.open{display:flex}.modal{width:min(560px,100%);border:1px solid #394649;background:#151c1f;border-radius:14px;box-shadow:var(--shadow);overflow:hidden}.modal-header{padding:14px 17px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}.modal-header strong{font-size:13px}.modal-body{padding:17px;max-height:65vh;overflow:auto}.modal-body p{color:#a8b6b5;font-size:11px;line-height:1.6}.export-option{display:flex;align-items:center;gap:11px;padding:12px;margin-bottom:8px;background:#101617;border:1px solid #303c3e;border-radius:9px;cursor:pointer}.export-option:hover{border-color:#718b49}.export-option .ext{font-size:10px;font-weight:900;color:var(--lime);background:#273322;border-radius:7px;padding:8px}.export-option strong{font-size:11px;display:block}.export-option small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.modal-actions{padding:12px 17px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}
+  @media(max-width:1150px){.layout{grid-template-columns:72px minmax(360px,1fr) 300px}.sidebar{padding:18px 9px}.workspace-label,.nav .label,.sidebar-card{display:none}.brand{min-width:0}.brandtitle,.crumb{display:none}.sidebar .nav button{justify-content:center;padding:12px 6px}.sidebar .nav button .ico{font-size:17px}.topbar{gap:13px}.brand{margin-right:3px}}
+  @media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{display:none}.inspector{border-left:0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.inspector .run-panel,.inspector .notice{grid-column:span 2}.main{padding:18px}.viewer-shell{min-height:460px}.heading h1{font-size:22px}.topbar{padding:0 14px}.brand{min-width:auto}}
+  @media(max-width:560px){.inspector{display:flex}.heading{display:block}.heading-actions{margin-top:13px}.steps{gap:5px}.step{padding:8px 7px;gap:6px}.step small{display:none}.step strong{font-size:9px}.num{width:19px;height:19px}.main{padding:15px 12px}.viewer-shell{min-height:400px}.viewport{min-height:330px}#rigSvg{min-height:330px}.chip{display:none}.statusline{align-items:flex-start;flex-direction:column;gap:3px}}
+
+
+  .pipeline-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+  .pipeline-actions .btn{white-space:normal;min-height:36px;padding:8px 7px;font-size:10px}
+  .pipeline-actions .wide{grid-column:1/-1}
+  .pipeline-status{margin-top:10px;padding:9px 10px;border:1px solid #303c3e;border-radius:7px;background:#101719;color:#9eaeac;font-size:10px;line-height:1.55;overflow-wrap:anywhere}
+  .pipeline-status.ok{border-color:#40583b;color:#c2d8b5;background:#18221a}
+  .pipeline-status.warn{border-color:#665b32;color:#dfd2a2;background:#242218}
+  .pipeline-check{display:flex;gap:8px;align-items:flex-start;color:#a9b6b5;font-size:10px;line-height:1.5;margin:9px 0}
+  .pipeline-check input{accent-color:var(--lime);margin-top:2px}
+  .pipe-mini{font-size:9px;line-height:1.55;color:#829292;margin-top:9px}
+  .code-preview{margin-top:9px}
+  .code-preview summary{cursor:pointer;color:var(--lime);font-size:10px;font-weight:800}
+  .code-preview textarea{width:100%;min-height:115px;resize:vertical;margin-top:8px;padding:8px;border:1px solid #344144;border-radius:7px;background:#0c1112;color:#b9c8c4;font:10px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace}
+
+  .reference-image{pointer-events:none;user-select:none}
+  .range-field{display:grid;gap:6px;margin:12px 0}
+  .range-field label{display:flex;justify-content:space-between;align-items:center;color:#a9b6b5;font-size:10px;font-weight:700}
+  .range-field label span{color:#c7f36b;font-variant-numeric:tabular-nums}
+  .range-field input[type=range]{width:100%;accent-color:var(--lime);cursor:pointer}
+  .ref-actions{display:flex;gap:7px;margin-top:10px}
+  .ref-actions .btn{flex:1;padding:8px 6px;font-size:10px}
+  .knowns{display:grid;gap:10px}
+  .known-item{display:grid;gap:4px;padding-bottom:9px;border-bottom:1px solid #293437}
+  .known-item:last-child{padding-bottom:0;border-bottom:0}
+  .known-item strong{font-size:10px;color:#dce5e2}
+  .known-item p{font-size:10px;color:#93a2a2;line-height:1.55;margin:0}
+  .known-item a,.resource-link{font-size:10px;color:var(--lime);text-decoration:none;font-weight:700}
+  .known-item a:hover,.resource-link:hover{text-decoration:underline}
+  .known-warning{margin-top:10px;border:1px solid #4c422c;border-radius:7px;padding:9px;background:#231e15;color:#c4b58f;font-size:9px;line-height:1.55}
+  .range-field input:disabled{opacity:.35;cursor:not-allowed}
+  @media(min-width:1151px){.layout{align-items:start}.main{height:min(calc(100vh - 62px),800px)}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="brandmark">CF</div><div class="brandtitle">CO-OP FORGE<small>PLAYER RIG STUDIO</small></div></div>
+    <div class="crumb">Workbench&nbsp; / &nbsp;<strong>Character rigging</strong></div>
+    <div class="top-spacer"></div>
+    <div class="chip"><span class="dot"></span>LOCAL WORKSPACE</div><div class="avatar">CF</div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="nav">
+        <button><span class="ico">▦</span><span class="label">Overview</span></button>
+        <button><span class="ico">◈</span><span class="label">Assets</span></button>
+        <button class="active"><span class="ico">⌘</span><span class="label">Rig Studio</span></button>
+        <button><span class="ico">↻</span><span class="label">Animations</span></button>
+        <button><span class="ico">⇩</span><span class="label">Exports</span></button>
+      </nav>
+      <div class="workspace-label">PROJECT</div>
+      <nav class="nav">
+        <button><span class="ico">◌</span><span class="label">Sven Co-op</span></button>
+        <button><span class="ico">⚙</span><span class="label">Preferences</span></button>
+      </nav>
+      <div class="sidebar-card"><div class="eyebrow">GoldSrc pipeline</div><strong>Build for the classics.</strong><p>Prepare a humanoid skeleton, then move through SMD/QC and model compilation in your local toolchain.</p><button class="smalllink" id="openPipeline">View pipeline ↗</button></div>
+    </aside>
+    <main class="main">
+      <div class="heading">
+        <div><div class="kicker">CHARACTER TOOLS / 01</div><h1>Rig your player model</h1><p>Place joint markers, validate the humanoid pose and export a rig setup for your Sven Co-op workflow.</p></div>
+        <div class="heading-actions"><button class="btn ghost" id="resetBtn">↺ Reset pose</button><button class="btn" id="exportTop">⇩ Export setup</button></div>
+      </div>
+      <div class="steps">
+        <div class="step active"><span class="num">1</span><div><strong>Import model</strong><small>Mesh or reference</small></div></div>
+        <div class="step"><span class="num">2</span><div><strong>Place joints</strong><small>Skeleton markers</small></div></div>
+        <div class="step"><span class="num">3</span><div><strong>Export setup</strong><small>SMD / QC workflow</small></div></div>
+      </div>
+      <section class="viewer-shell">
+        <div class="viewer-toolbar"><div class="viewer-label"><span class="tiny-dot"></span> VIEWPORT <span style="color:#536365;font-weight:500">/</span> FRONT ORTHO</div><div class="view-tools"><button class="icon-btn selected" title="Rig marker view" id="rigView">R</button><button class="icon-btn" title="Imported mesh preview" id="meshView">3D</button><button class="icon-btn" title="Front view" id="frontView">F</button><button class="icon-btn selected" title="Toggle skeleton" id="skeletonToggle">⌘</button><button class="icon-btn" title="Center view" id="centerView">⊙</button></div></div>
+        <div class="viewport" id="dropViewport">
+          <div class="viewer-corner top-left" id="viewportTitle">REFERENCE POSE · HUMANOID</div>
+          <svg id="rigSvg" viewBox="0 0 500 650" role="img" aria-label="Interactive humanoid rig placement view">
+            <defs><linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#859395"/><stop offset=".55" stop-color="#526164"/><stop offset="1" stop-color="#354245"/></linearGradient><linearGradient id="limbGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#77878a"/><stop offset="1" stop-color="#3c484b"/></linearGradient></defs>
+            <line class="floor-line" x1="35" y1="604" x2="465" y2="604"/><line x1="250" y1="48" x2="250" y2="615" stroke="#97aa9e" stroke-width="1" stroke-dasharray="2 9" opacity=".3"/>
+            <g id="modelSilhouette" opacity=".94">
+              <ellipse class="silhouette-shadow" cx="250" cy="604" rx="83" ry="9"/>
+              <path class="silhouette" fill="url(#bodyGrad)" d="M228 162 Q221 174 221 190 L204 204 Q192 210 180 217 L147 224 Q137 226 129 219 L108 217 Q96 218 94 227 Q95 237 109 238 L144 244 Q156 245 166 238 L199 229 L214 221 L223 260 Q225 288 218 320 L222 361 L239 371 L250 367 L261 371 L278 361 L282 320 Q275 288 277 260 L286 221 L301 229 L334 238 Q344 245 356 244 L391 238 Q405 237 406 227 Q404 218 392 217 L371 219 Q363 226 353 224 L320 217 Q308 210 296 204 L279 190 Q279 174 272 162 Z"/>
+              <path class="silhouette" d="M222 352 L239 358 L246 381 L235 446 L233 483 L224 531 L229 578 Q229 585 221 590 L193 590 Q186 588 192 580 L204 551 L206 523 L205 484 L208 447 L211 405 L210 368 Z" fill="url(#limbGrad)"/>
+              <path class="silhouette" d="M278 352 L261 358 L254 381 L265 446 L267 483 L276 531 L271 578 Q271 585 279 590 L307 590 Q314 588 308 580 L296 551 L294 523 L295 484 L292 447 L289 405 L290 368 Z" fill="url(#limbGrad)"/>
+              <path class="silhouette" d="M220 99 Q250 79 280 99 L282 133 Q279 158 265 169 L263 186 L237 186 L235 169 Q221 158 218 133 Z" fill="url(#bodyGrad)"/>
+              <ellipse class="silhouette" cx="250" cy="124" rx="31" ry="37" fill="url(#bodyGrad)"/>
+              <path d="M221 114 Q223 86 250 86 Q278 88 280 114 L271 107 Q252 101 230 109 Z" fill="#a6b4b3" opacity=".25"/>
+              <path d="M231 126 Q250 133 269 126" fill="none" stroke="#202a2d" stroke-width="2" opacity=".7"/>
+              <path d="M232 145 Q250 153 268 145" fill="none" stroke="#222b2d" stroke-width="2" opacity=".5"/>
+              <path d="M223 184 L250 205 L277 184 L293 203 L279 250 L271 300 L278 359 L250 371 L222 359 L229 300 L221 250 L207 203 Z" fill="#3e4b4d" stroke="#9ba9a8" stroke-opacity=".2"/>
+              <path d="M223 190 L250 211 L277 190 L269 220 L250 230 L231 220 Z" fill="#788789" opacity=".65"/>
+              <path d="M232 228 L268 228 M230 247 L270 247 M229 266 L271 266 M228 285 L272 285 M228 304 L272 304" stroke="#a5b3b1" stroke-opacity=".22" stroke-width="2"/>
+              <path d="M224 361 L241 365 L250 362 L259 365 L276 361" stroke="#b1bfba" stroke-opacity=".4" fill="none" stroke-width="2"/>
+              <path d="M202 231 L214 237 L220 254 M298 231 L286 237 L280 254" stroke="#a5b3b1" stroke-opacity=".2" fill="none" stroke-width="2"/>
+              <path d="M211 410 L234 414 M266 414 L289 410 M207 480 L233 481 M267 481 L293 480 M204 530 L227 535 M273 535 L296 530" stroke="#a5b3b1" stroke-opacity=".25" stroke-width="2"/>
+              <path d="M191 590 Q210 585 229 590 L234 600 Q212 605 190 600 Z M271 590 Q290 585 309 590 L310 600 Q288 605 266 600 Z" fill="#68777a" stroke="#9aa9a8" stroke-opacity=".35"/>
+            </g>
+            <image id="referenceImage" class="reference-image" x="70" y="60" width="360" height="530" preserveAspectRatio="xMidYMid meet" visibility="hidden" opacity=".6" pointer-events="none"/><g id="boneLayer"></g><g id="jointLayer"></g>
+          </svg>
+          <canvas id="meshCanvas" aria-label="Interactive 3D mesh preview" tabindex="0"></canvas><div class="mesh-hint" id="meshHint" style="display:none">Drag to orbit · Scroll to zoom<br/>OBJ/SMD/GLB geometry parsed locally</div>
+          <div class="viewer-corner bottom-left" id="viewportHint">DRAG MARKERS TO ADJUST · SYMMETRY AVAILABLE</div><div class="viewer-corner bottom-right" id="viewportStats">12 JOINTS · 13 BONES<br/>SKELETON PREVIEW</div>
+        </div>
+        <div class="legend-strip" id="jointLegend"></div>
+      </section>
+      <div class="statusline"><span id="statusMessage"><strong>Ready.</strong> Drag a colored joint marker to position the skeleton.</span><span>UNITS: MODEL SPACE · CONFIG ONLY</span></div>
+    </main>
+    <aside class="inspector">
+      <section class="panel" id="modelInputPanel">
+        <div class="panel-head"><strong>Model input</strong><span id="fileStatus">No file loaded</span></div>
+        <div class="panel-body">
+          <label class="dropzone" id="dropzone" for="modelFile"><span class="uploadicon">⇧</span><strong>Drop model file or browse</strong><p>OBJ, SMD and binary GLB files can be previewed locally; MDL/QC files are inspected as source metadata.</p><span class="btn" style="padding:7px 10px">Choose file</span><span class="filetypes">OBJ · SMD · QC · GLB · GLTF · FBX · MDL</span><input id="modelFile" type="file" accept=".obj,.smd,.qc,.glb,.gltf,.fbx,.mdl" /></label>
+          <div class="filecard" id="filecard"><div class="filebadge" id="fileExt">SMD</div><div class="filemeta"><strong id="fileName">model.smd</strong><span id="fileInfo">Local file</span></div><button class="removefile" id="removeFile" title="Remove file">×</button></div>
+          <div id="fileHint" class="filetypes" style="margin-top:8px">For compiled GoldSrc .mdl files, decompile to SMD/QC first for editing in a standard toolchain.</div>
+        </div>
+      </section>
+      <section class="panel" id="analysisPanel" style="display:none">
+        <div class="panel-head"><strong>Asset analysis</strong><span id="analysisState">LOCAL PARSE</span></div>
+        <div class="panel-body">
+          <div class="analysis-grid" id="analysisStats"></div>
+          <div class="mesh-settings" id="meshSettings" style="display:none">
+            <div class="field" style="margin:0"><label for="meshAxis">Up axis <span>preview conversion</span></label><select id="meshAxis"><option value="auto">Auto · by file type</option><option value="zup">GoldSrc / Z-up</option><option value="yup">Blender / Y-up</option></select></div>
+            <label><input id="meshWireframe" type="checkbox" /> Show triangle edges</label>
+            <label><input id="meshImportedBones" type="checkbox" checked /> Show SMD bone hierarchy</label>
+          </div>
+          <div id="analysisWarnings"></div>
+        </div>
+      </section>
+      <section class="panel" id="referencePanel">
+        <div class="panel-head"><strong>Reference image</strong><span id="referenceStatus">No image</span></div>
+        <div class="panel-body">
+          <label class="dropzone" id="referenceDropzone" for="referenceFile"><span class="uploadicon">▧</span><strong>Import front-view reference</strong><p>Use a turnaround, screenshot or orthographic drawing as a placement guide.</p><span class="btn" style="padding:7px 10px">Choose image</span><span class="filetypes">PNG · JPG · WEBP · GIF · local only</span><input id="referenceFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/bmp" /></label>
+          <div class="filecard" id="referenceCard"><div class="filebadge">IMG</div><div class="filemeta"><strong id="referenceName">reference.png</strong><span id="referenceInfo">Image loaded locally</span></div><button class="removefile" id="removeReference" title="Remove reference">×</button></div>
+          <div class="range-field"><label for="referenceOpacity">Overlay opacity <span id="referenceOpacityValue">60%</span></label><input id="referenceOpacity" type="range" min="10" max="100" step="5" value="60" disabled /></div>
+          <div class="range-field"><label for="referenceScale">Reference scale <span id="referenceScaleValue">100%</span></label><input id="referenceScale" type="range" min="50" max="150" step="5" value="100" disabled /></div>
+          <div class="range-field"><label for="referenceX">Horizontal offset <span id="referenceXValue">0</span></label><input id="referenceX" type="range" min="-100" max="100" step="2" value="0" disabled /></div>
+          <div class="range-field"><label for="referenceY">Vertical offset <span id="referenceYValue">0</span></label><input id="referenceY" type="range" min="-100" max="100" step="2" value="0" disabled /></div>
+          <div class="ref-actions"><button class="btn" id="toggleReference" disabled>Hide reference</button><button class="btn" id="fitReference" disabled>Reset fit</button></div>
+          <div id="referenceHint" class="filetypes" style="margin-top:9px">Reference pictures stay local. Their file is included in the all-in-one project ZIP; JSON records the image name and adjustment settings.</div>
+        </div>
+      </section>
+      <section class="panel" id="rigConfigurationPanel">
+        <div class="panel-head"><strong>Rig configuration</strong><span>STEP 02</span></div>
+        <div class="panel-body">
+          <div class="field"><label for="rigPreset">Skeleton preset</label><select id="rigPreset"><option value="sven">Sven Co-op Player · humanoid</option><option value="standard">Standard humanoid</option><option value="arms">Arms &amp; torso only</option></select></div>
+          <div class="field"><label for="targetFormat">Target pipeline</label><select id="targetFormat"><option value="goldsrc">GoldSrc · SMD + QC</option><option value="blender">Blender · rig setup JSON</option><option value="goldsrc_toolchain">Blender 5.2 GoldSrc Toolchain · experimental</option><option value="generic">Generic humanoid · JSON</option></select></div>
+          <div class="field"><label for="height">Character height <span>meters</span></label><input id="height" type="number" min="0.1" max="5" step="0.01" value="1.80" /></div>
+          <div class="toggle-row"><div><strong>Mirror symmetry</strong><small>Mirror left/right joint moves</small></div><label class="switch"><input id="mirrorToggle" type="checkbox" checked /><span></span></label></div>
+          <div class="toggle-row" style="margin-top:8px"><div><strong>Show skeleton overlay</strong><small>Display bone connections</small></div><label class="switch"><input id="boneToggle" type="checkbox" checked /><span></span></label></div>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><strong>Joint placement</strong><span id="jointCount">12 markers</span></div>
+        <div class="panel-body" style="padding:7px"><div class="joint-list" id="jointList"></div></div>
+        <div class="panel-foot"><button class="text-btn" id="autoPlace">Auto-place markers</button><button class="text-btn" id="resetJoints">Reset</button></div>
+      </section>
+      <div class="run-panel"><h3>Ready to build the rig?</h3><p>Generate a skeleton placement preview and export the setup files for your local GoldSrc pipeline.</p><button class="btn primary" id="generateBtn">✦ Generate rig preview</button></div>
+      <div class="notice"><span class="i">ⓘ</span><span>OBJ/SMD/GLB geometry is parsed locally. The integrated exporter can rebuild a rigid-weight reference SMD, but it cannot compile a playable .mdl or preserve animation compatibility automatically.</span></div>
+
+      <section class="panel" id="integratedPipeline">
+        <div class="panel-head"><strong>Integrated local pipeline</strong><span>ALL IN THIS WEBPAGE</span></div>
+        <div class="panel-body">
+          <div class="filetypes">Generate deliverables from the current rig and imported geometry. Processing runs in this browser; no project assets are uploaded.</div>
+          <label class="pipeline-check"><input id="autoRigidWeights" type="checkbox" checked /><span><strong>Rebuild a rigid-weight reference SMD</strong><br/>Assign every triangle corner to the nearest generated bone segment. This rebuilds the mesh against the current marker rig; it does not preserve the source SMD skeleton/animations.</span></label>
+          <label class="pipeline-check"><input id="fitGoldSrcScale" type="checkbox" checked /><span><strong>Fit mesh height to the character setting</strong><br/>Scale the imported geometry to height × 39.3701 GoldSrc-style units. Disable to preserve the source geometry scale.</span></label>
+          <div class="pipeline-actions">
+            <button class="btn" id="pipelineJson">⇩ Rig JSON</button>
+            <button class="btn" id="pipelineQc">⇩ QC starter</button>
+            <button class="btn" id="pipelineSmd" disabled>⇩ Build reference SMD</button>
+            <button class="btn" id="pipelineBridge">⇩ Blender bridge .py</button>
+            <button class="btn primary wide" id="pipelinePackage">⇩ Download complete project ZIP</button>
+            <button class="btn wide" id="pipelineValidate">✓ Validate current export</button>
+            <button class="btn wide" id="pipelineReport">⇩ Download compatibility report</button>
+          </div>
+          <div id="pipelineStatus" class="pipeline-status">Import an OBJ, SMD or GLB to enable reference SMD generation. JSON, QC starter, and the Blender bridge are available now.</div>
+          <details class="code-preview"><summary>Preview embedded Blender bridge source</summary><textarea id="bridgePreview" readonly spellcheck="false" aria-label="Embedded Blender bridge source"></textarea></details>
+          <div class="pipe-mini">GoldSrc compilation still requires a compatible StudioMDL toolchain. The downloaded SMD is a generated rigid-weight reference mesh, not a compiled MDL. Always validate the result and preserve/restore required animation sequences.</div>
+        </div>
+      </section>
+      <section class="panel" id="knownsPanel">
+        <div class="panel-head"><strong>GoldSrc / Blender knowns</strong><span>WORKFLOW NOTES</span></div>
+        <div class="panel-body knowns">
+          <div class="known-item"><strong>1 · Bring an existing player into Blender</strong><p>For inspection, SourceIO supports importing engine MDLs, including GoldSrc workflows documented by the Blender community. Its current format table lists MDL import, not MDL export.</p><a href="https://github.com/REDxEYE/SourceIO" target="_blank" rel="noopener noreferrer">SourceIO · importer ↗</a></div>
+          <div class="known-item"><strong>2 · Keep an editable source pipeline</strong><p>Decompile the target model into reference/animation SMDs and QC, edit the correct reference mesh and preserve its sequence set. Blender Source Tools handles SMD/QC interchange; choose a GoldSrc-compatible export setup.</p><a href="https://www.svencoop.com/modelreplace.php" target="_blank" rel="noopener noreferrer">Sven Co-op model replacement guide ↗</a><a href="https://steamreview.org/BlenderSourceTools/" target="_blank" rel="noopener noreferrer">Blender Source Tools ↗</a></div>
+          <div class="known-item"><strong>3 · Classic GoldSrc rig constraints</strong><p>Classic GoldSrc uses rigid vertex-to-bone assignment rather than smooth blended weights. The standard tutorial documents 128 bones and 4,080 triangles per SMD; verify limits against the exact compiler and target mod.</p><a href="https://www.the303.org/gold_mdl.htm" target="_blank" rel="noopener noreferrer">GoldSrc model export limits ↗</a></div>
+          <div class="known-item"><strong>4 · Compiler / tooling choice</strong><p>Use a GoldSrc-compatible studiomdl compiler, preferably the Sven Co-op build for Sven-specific features, and validate the compiled model in a viewer plus the game.</p><a href="https://www.the303.org/goldsrc/index.html" target="_blank" rel="noopener noreferrer">GoldSrc tool index ↗</a></div>
+          <div class="known-warning">Experimental: a newer Blender 5.2 GoldSrc MDL toolchain project advertises SMD/QC export and Sven StudioMDL compilation. Treat it as an emerging community project and validate its outputs before production use.</div>
+          <a class="resource-link" href="https://github.com/XiangXtreme/goldsrc-model-toolchain" target="_blank" rel="noopener noreferrer">Experimental Blender 5.2 GoldSrc toolchain ↗</a>
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal-backdrop" id="exportModal" role="dialog" aria-modal="true" aria-labelledby="exportTitle">
+  <div class="modal"><div class="modal-header"><strong id="exportTitle">Export rig setup</strong><button class="removefile" id="closeModal" aria-label="Close">×</button></div><div class="modal-body"><p>Export the current marker positions as configuration files. For a playable Sven Co-op model, continue with real mesh weights, compatible animation sequences and the GoldSrc model compiler.</p>
+  <label class="export-option"><span class="ext">JSON</span><span><strong>Rig setup · rig_setup.json</strong><small>Joint positions, symmetry and pipeline settings</small></span><input type="radio" name="exportMode" value="json" checked style="margin-left:auto;accent-color:#c7f36b"></label>
+  <label class="export-option"><span class="ext">QC</span><span><strong>GoldSrc starter · player_template.qc</strong><small>Editable QC scaffold; references must be matched to your SMD files</small></span><input type="radio" name="exportMode" value="qc" style="margin-left:auto;accent-color:#c7f36b"></label>
+  <label class="export-option"><span class="ext">ZIP*</span><span><strong>Both setup files</strong><small>Download both individually (no ZIP dependency)</small></span><input type="radio" name="exportMode" value="both" style="margin-left:auto;accent-color:#c7f36b"></label>
+  <p style="font-size:10px;color:#7f9090;margin-bottom:0">*This exports setup assets only, not a compiled model or generated skin weights.</p></div><div class="modal-actions"><button class="btn" id="cancelExport">Cancel</button><button class="btn primary" id="downloadExport">Download setup</button></div></div>
+</div>
+<script type="text/plain" id="blenderBridgeSource">
+"""Co-Op Forge: Rig JSON -> Blender armature bridge.
+
+Run this file in Blender's Text Editor, or install it as an add-on.
+The operator reads the JSON exported by Co-Op Forge and builds a simple,
+editable humanoid armature. Optional nearest-segment weights are RIGID
+(one vertex belongs to exactly one deform group), as a GoldSrc-oriented
+blockout. Inspect and correct the result before SMD/QC export or compilation.
+
+This does not import binary GoldSrc MDL files, retarget existing animations,
+export SMD, or compile MDL. It generates a Blender scene rig from 2D guide
+markers, not a reconstruction of an existing model's native skeleton.
+
+Complexity: rigid weighting is O(V * B), where V is mesh vertices and B is
+created bones. Temporary world-vertex positions require O(V) memory.
+"""
+
+from __future__ import annotations
+
+bl_info = {
+    "name": "Co-Op Forge Rig JSON Bridge",
+    "author": "OpenAI",
+    "version": (1, 0, 0),
+    "blender": (3, 6, 0),
+    "location": "View3D > Sidebar > Co-Op Forge",
+    "description": "Create a Blender armature from a Co-Op Forge rig setup JSON",
+    "category": "Rigging",
+}
+
+
+import json
+import math
+import os
+from typing import Any
+
+import bpy
+from bpy.props import BoolProperty, StringProperty
+from bpy.types import Operator, Panel
+from bpy_extras.io_utils import ImportHelper
+from mathutils import Vector
+
+
+JOINT_KEYS = {
+    "chin", "shoulder_l", "shoulder_r", "elbow_l", "elbow_r",
+    "wrist_l", "wrist_r", "pelvis", "knee_l", "knee_r", "ankle_l", "ankle_r",
+}
+
+# Segment tuples: (Blender bone name, head marker, tail marker, parent bone).
+BONE_DEFINITIONS = (
+    ("spine", "pelvis", "chin", None),
+    ("head", "chin", "head_top", "spine"),
+    ("clavicle.L", "chin", "shoulder_l", "spine"),
+    ("upperarm.L", "shoulder_l", "elbow_l", "clavicle.L"),
+    ("forearm.L", "elbow_l", "wrist_l", "upperarm.L"),
+    ("clavicle.R", "chin", "shoulder_r", "spine"),
+    ("upperarm.R", "shoulder_r", "elbow_r", "clavicle.R"),
+    ("forearm.R", "elbow_r", "wrist_r", "upperarm.R"),
+    ("thigh.L", "pelvis", "knee_l", "spine"),
+    ("calf.L", "knee_l", "ankle_l", "thigh.L"),
+    ("thigh.R", "pelvis", "knee_r", "spine"),
+    ("calf.R", "knee_r", "ankle_r", "thigh.R"),
+)
+
+
+class RigBridgeError(RuntimeError):
+    """Raised when the supplied setup or target object is not usable."""
+
+
+def _number(value: Any, label: str) -> float:
+    try:
+        number = float(value)
+    except (TypeError, ValueError) as exc:
+        raise RigBridgeError(f"Invalid numeric value for {label}.") from exc
+    if not math.isfinite(number):
+        raise RigBridgeError(f"Non-finite numeric value for {label}.")
+    return number
+
+
+def _load_rig_json(filepath: str) -> dict[str, Any]:
+    if not filepath or not os.path.isfile(filepath):
+        raise RigBridgeError("Select a valid Co-Op Forge rig setup JSON file.")
+    try:
+        with open(filepath, "r", encoding="utf-8") as file:
+            data = json.load(file)
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise RigBridgeError(f"Could not read JSON: {exc}") from exc
+
+    if not isinstance(data, dict) or not isinstance(data.get("joints"), dict):
+        raise RigBridgeError("JSON does not contain a 'joints' object. Export a rig setup from Co-Op Forge.")
+    joints = data["joints"]
+    missing = sorted(JOINT_KEYS - set(joints.keys()))
+    if missing:
+        raise RigBridgeError("Rig JSON is missing required markers: " + ", ".join(missing))
+
+    clean: dict[str, tuple[float, float]] = {}
+    for key in JOINT_KEYS:
+        point = joints.get(key)
+        if not isinstance(point, dict):
+            raise RigBridgeError(f"Joint '{key}' must contain x and y values.")
+        clean[key] = (_number(point.get("x"), f"{key}.x"), _number(point.get("y"), f"{key}.y"))
+    return {"source": data, "joints": clean}
+
+
+def _target_bounds(mesh_obj: bpy.types.Object | None, requested_height: float) -> tuple[Vector, float, float, float]:
+    """Return world-space model center and size; fallback dimensions for an unbound rig."""
+    if mesh_obj is None:
+        height = max(0.1, min(5.0, requested_height))
+        width = height * 0.6
+        return Vector((0.0, 0.0, 0.0)), width, height, height * 0.12
+
+    corners = [mesh_obj.matrix_world @ Vector(corner) for corner in mesh_obj.bound_box]
+    min_x, max_x = min(p.x for p in corners), max(p.x for p in corners)
+    min_y, max_y = min(p.y for p in corners), max(p.y for p in corners)
+    min_z, max_z = min(p.z for p in corners), max(p.z for p in corners)
+    width, depth, height = max_x - min_x, max_y - min_y, max_z - min_z
+    if height < 1e-5:
+        height = max(0.1, min(5.0, requested_height))
+        min_z = mesh_obj.matrix_world.translation.z
+    if width < 1e-5:
+        width = height * 0.6
+    center = Vector(((min_x + max_x) * 0.5, (min_y + max_y) * 0.5, min_z))
+    return center, width, height, depth
+
+
+def _map_joints_to_world(joints: dict[str, tuple[float, float]], center: Vector,
+                         width: float, height: float) -> dict[str, Vector]:
+    wrist_l_x, wrist_r_x = joints["wrist_l"][0], joints["wrist_r"][0]
+    span = abs(wrist_r_x - wrist_l_x)
+    if span < 1.0:
+        span = 284.0
+    mid_x = (wrist_l_x + wrist_r_x) * 0.5
+    x_scale = width / span
+
+    ankle_y = (joints["ankle_l"][1] + joints["ankle_r"][1]) * 0.5
+    chin_y = joints["chin"][1]
+    top_y = min(chin_y - max(30.0, (ankle_y - chin_y) * 0.14), ankle_y - 1.0)
+    vertical_span = max(1.0, ankle_y - top_y)
+    z_scale = height / vertical_span
+
+    result: dict[str, Vector] = {}
+    for key, (x, y) in joints.items():
+        world_x = center.x + (x - mid_x) * x_scale
+        world_z = center.z + (ankle_y - y) * z_scale
+        result[key] = Vector((world_x, center.y, world_z))
+
+    # The browser marker is the chin, not the top of the head. Estimate a short head tail.
+    result["head_top"] = result["chin"] + Vector((0.0, 0.0, max(height * 0.1, 0.06)))
+    return result
+
+
+def _point_segment_distance_sq(point: Vector, head: Vector, tail: Vector) -> float:
+    segment = tail - head
+    length_sq = segment.length_squared
+    if length_sq <= 1e-12:
+        return (point - head).length_squared
+    t = max(0.0, min(1.0, (point - head).dot(segment) / length_sq))
+    closest = head + t * segment
+    return (point - closest).length_squared
+
+
+def _rigid_bind(mesh_obj: bpy.types.Object, arm_obj: bpy.types.Object,
+                segments: list[tuple[str, Vector, Vector]], replace_groups: bool) -> int:
+    if mesh_obj.type != "MESH":
+        raise RigBridgeError("The target object must be a mesh.")
+    if len(mesh_obj.data.vertices) == 0:
+        raise RigBridgeError("The selected mesh contains no vertices.")
+    if mesh_obj.vertex_groups and not replace_groups:
+        raise RigBridgeError(
+            "The mesh already has vertex groups. Enable 'Replace existing vertex groups' only if you intend to overwrite them, "
+            "or run without rigid weighting to create the armature only."
+        )
+
+    # Cache original world-space positions before changing the parent/modifier stack.
+    world_positions = [mesh_obj.matrix_world @ vertex.co for vertex in mesh_obj.data.vertices]
+    if replace_groups:
+        for group in list(mesh_obj.vertex_groups):
+            mesh_obj.vertex_groups.remove(group)
+
+    groups = {name: mesh_obj.vertex_groups.new(name=name) for name, _, _ in segments}
+    assigned = 0
+    for vertex_index, point in enumerate(world_positions):
+        bone_name = min(segments, key=lambda seg: _point_segment_distance_sq(point, seg[1], seg[2]))[0]
+        groups[bone_name].add([vertex_index], 1.0, "REPLACE")
+        assigned += 1
+
+    modifier = mesh_obj.modifiers.new(name="Co-Op Forge Armature", type="ARMATURE")
+    modifier.object = arm_obj
+    modifier.use_vertex_groups = True
+
+    old_world = mesh_obj.matrix_world.copy()
+    mesh_obj.parent = arm_obj
+    mesh_obj.matrix_world = old_world
+    return assigned
+
+
+def _build_armature(context: bpy.types.Context, rig: dict[str, Any], filepath: str,
+                    bind_rigid_weights: bool, replace_groups: bool) -> tuple[bpy.types.Object, int]:
+    active = context.view_layer.objects.active
+    mesh_obj = active if active and active.type == "MESH" else None
+    if bind_rigid_weights and mesh_obj is None:
+        raise RigBridgeError("Select the target mesh object before importing the rig JSON, or disable 'Assign rigid weights'.")
+    if bind_rigid_weights and mesh_obj and mesh_obj.vertex_groups and not replace_groups:
+        raise RigBridgeError("Selected mesh already has vertex groups. Tick 'Replace existing vertex groups' only if overwrite is intended.")
+
+    source = rig["source"]
+    requested_height = _number(source.get("height_meters", 1.8), "height_meters")
+    center, width, height, _depth = _target_bounds(mesh_obj, requested_height)
+    points = _map_joints_to_world(rig["joints"], center, width, height)
+
+    arm_name = "CoOpForge_Rig"
+    if arm_name in bpy.data.objects:
+        raise RigBridgeError(f"An object named '{arm_name}' already exists. Rename it or remove the previous generated rig first.")
+
+    arm_data = bpy.data.armatures.new(arm_name)
+    arm_obj = bpy.data.objects.new(arm_name, arm_data)
+    context.scene.collection.objects.link(arm_obj)
+    arm_obj.show_in_front = True
+    arm_data.display_type = "STICK"
+
+    created_segments: list[tuple[str, Vector, Vector]] = []
+    try:
+        # Switch to Object Mode before editing armature data.
+        if context.object and context.object.mode != "OBJECT":
+            bpy.ops.object.mode_set(mode="OBJECT")
+        bpy.ops.object.select_all(action="DESELECT")
+        arm_obj.select_set(True)
+        context.view_layer.objects.active = arm_obj
+        bpy.ops.object.mode_set(mode="EDIT")
+        edit_bones: dict[str, bpy.types.EditBone] = {}
+
+        for bone_name, head_key, tail_key, parent_name in BONE_DEFINITIONS:
+            head, tail = points[head_key].copy(), points[tail_key].copy()
+            if (tail - head).length < 0.005:
+                tail.z += 0.02
+            bone = arm_data.edit_bones.new(bone_name)
+            bone.head, bone.tail = head, tail
+            edit_bones[bone_name] = bone
+            created_segments.append((bone_name, head.copy(), tail.copy()))
+
+        for bone_name, _head_key, _tail_key, parent_name in BONE_DEFINITIONS:
+            if parent_name:
+                bone = edit_bones[bone_name]
+                parent = edit_bones[parent_name]
+                bone.parent = parent
+                bone.use_connect = (bone.head - parent.tail).length < 1e-4
+
+        bpy.ops.object.mode_set(mode="OBJECT")
+        assigned = 0
+        if bind_rigid_weights and mesh_obj:
+            assigned = _rigid_bind(mesh_obj, arm_obj, created_segments, replace_groups)
+        else:
+            assigned = 0
+
+        # Keep the source mesh and generated rig selected for inspection.
+        bpy.ops.object.select_all(action="DESELECT")
+        arm_obj.select_set(True)
+        if mesh_obj:
+            mesh_obj.select_set(True)
+        context.view_layer.objects.active = arm_obj
+
+        report = {
+            "bridge": "Co-Op Forge Rig JSON Bridge",
+            "source_json": os.path.abspath(filepath),
+            "target_mesh": mesh_obj.name if mesh_obj else None,
+            "armature_object": arm_obj.name,
+            "bone_names": [name for name, _, _, _ in BONE_DEFINITIONS],
+            "rigid_vertex_assignments": assigned,
+            "height_meters_from_setup": requested_height,
+            "target_mesh_dimensions_world": {"width": width, "height": height, "depth": _depth},
+            "warnings": [
+                "Bone positions are mapped from 2D browser markers; inspect scale, depth and joint alignment.",
+                "Nearest-segment weights are a rigid blockout and are not quality-assured animation weights.",
+                "Bone names differ from an existing game's native skeleton unless manually renamed; animation compatibility is not guaranteed.",
+                "Export SMD/QC with a compatible Blender toolchain and compile with a suitable GoldSrc/Sven Co-op StudioMDL.",
+            ],
+        }
+        report_path = os.path.splitext(os.path.abspath(filepath))[0] + "_blender_bridge_report.json"
+        with open(report_path, "w", encoding="utf-8") as report_file:
+            json.dump(report, report_file, indent=2)
+        return arm_obj, assigned
+    except Exception:
+        # Remove the partial generated armature if creation failed. The source mesh is not deleted.
+        if arm_obj.name in bpy.data.objects:
+            bpy.data.objects.remove(arm_obj, do_unlink=True)
+        if arm_data.users == 0:
+            bpy.data.armatures.remove(arm_data)
+        raise
+
+
+class IMPORT_SCENE_OT_coop_forge_rig_json(Operator, ImportHelper):
+    """Import a Co-Op Forge rig setup JSON and generate a Blender armature."""
+
+    bl_idname = "import_scene.coop_forge_rig_json"
+    bl_label = "Import Co-Op Forge Rig JSON"
+    bl_options = {"REGISTER", "UNDO"}
+
+    filename_ext = ".json"
+    filter_glob: StringProperty(default="*.json", options={"HIDDEN"})
+    bind_rigid_weights: BoolProperty(
+        name="Assign rigid weights",
+        description="Assign every mesh vertex to its nearest rig bone segment (blockout only)",
+        default=True,
+    )
+    replace_existing_vertex_groups: BoolProperty(
+        name="Replace existing vertex groups",
+        description="Destructively remove the selected mesh's existing vertex groups before generating rigid weights",
+        default=False,
+    )
+
+    def execute(self, context):
+        try:
+            rig = _load_rig_json(self.filepath)
+            arm_obj, assigned = _build_armature(
+                context,
+                rig,
+                self.filepath,
+                bool(self.bind_rigid_weights),
+                bool(self.replace_existing_vertex_groups),
+            )
+        except (RigBridgeError, OSError, RuntimeError, ValueError) as exc:
+            self.report({"ERROR"}, str(exc))
+            return {"CANCELLED"}
+
+        if self.bind_rigid_weights:
+            self.report({"WARNING"}, f"Created {arm_obj.name}; assigned {assigned} rigid vertex weights. Inspect deformations before export.")
+        else:
+            self.report({"INFO"}, f"Created {arm_obj.name}. No vertex weights were assigned.")
+        return {"FINISHED"}
+
+
+class VIEW3D_PT_coop_forge_rig_bridge(Panel):
+    bl_label = "Co-Op Forge"
+    bl_idname = "VIEW3D_PT_coop_forge_rig_bridge"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Co-Op Forge"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text="Rig JSON → Blender Armature", icon="ARMATURE_DATA")
+        layout.label(text="Select the target mesh first.", icon="INFO")
+        layout.operator(IMPORT_SCENE_OT_coop_forge_rig_json.bl_idname, icon="IMPORT")
+        box = layout.box()
+        box.label(text="Rigid nearest-bone weights are approximate.")
+        box.label(text="Inspect bones, groups, and animation before SMD export.")
+
+
+CLASSES = (
+    IMPORT_SCENE_OT_coop_forge_rig_json,
+    VIEW3D_PT_coop_forge_rig_bridge,
+)
+
+
+def register():
+    for cls in CLASSES:
+        bpy.utils.register_class(cls)
+
+
+def unregister():
+    for cls in reversed(CLASSES):
+        bpy.utils.unregister_class(cls)
+
+
+if __name__ == "__main__":
+    register()
+</script>
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const defaults = {
+    chin:{x:250,y:160,color:'#50d8de',label:'CHIN',side:'center'},
+    shoulder_l:{x:222,y:203,color:'#f3d463',label:'SHOULDER L',side:'left'},
+    shoulder_r:{x:278,y:203,color:'#f3d463',label:'SHOULDER R',side:'right'},
+    elbow_l:{x:158,y:222,color:'#65df9b',label:'ELBOW L',side:'left'},
+    elbow_r:{x:342,y:222,color:'#65df9b',label:'ELBOW R',side:'right'},
+    wrist_l:{x:108,y:227,color:'#ef7cdb',label:'WRIST L',side:'left'},
+    wrist_r:{x:392,y:227,color:'#ef7cdb',label:'WRIST R',side:'right'},
+    pelvis:{x:250,y:366,color:'#dbe6dc',label:'PELVIS',side:'center'},
+    knee_l:{x:210,y:478,color:'#ffa45f',label:'KNEE L',side:'left'},
+    knee_r:{x:290,y:478,color:'#ffa45f',label:'KNEE R',side:'right'},
+    ankle_l:{x:218,y:582,color:'#c7f36b',label:'ANKLE L',side:'left'},
+    ankle_r:{x:282,y:582,color:'#c7f36b',label:'ANKLE R',side:'right'}
+  };
+  const pairs = [['chin','shoulder_l'],['chin','shoulder_r'],['shoulder_l','shoulder_r'],['shoulder_l','elbow_l'],['elbow_l','wrist_l'],['shoulder_r','elbow_r'],['elbow_r','wrist_r'],['shoulder_l','pelvis'],['shoulder_r','pelvis'],['pelvis','knee_l'],['knee_l','ankle_l'],['pelvis','knee_r'],['knee_r','ankle_r']];
+  let joints = structuredClone(defaults), selected = 'pelvis', showBones = true, showLabels = true, loadedFile = null, generated = false, dragId = null, toastTimer = null;
+  let referenceFile = null, referenceUrl = null, referenceVisible = true, referenceDimensions = null;
+  let meshData = null, qcData = null, meshViewActive = false, meshDrag = null, meshParsedFor = null;
+  const meshCamera = { azimuth: 0.32, elevation: 0.12, zoom: 1, panX: 0, panY: 0 };
+  const meshCanvas = $('meshCanvas'); const meshCtx = meshCanvas.getContext('2d');
+  const svg = $('rigSvg'), boneLayer = $('boneLayer'), jointLayer = $('jointLayer');
+  const pretty = (key) => key.split('_').map(s => s[0].toUpperCase()+s.slice(1)).join(' ');
+  const mirrorKey = (key) => ({shoulder_l:'shoulder_r',shoulder_r:'shoulder_l',elbow_l:'elbow_r',elbow_r:'elbow_l',wrist_l:'wrist_r',wrist_r:'wrist_l',knee_l:'knee_r',knee_r:'knee_l',ankle_l:'ankle_r',ankle_r:'ankle_l'})[key];
+  function el(tag, attrs={}) { const node=document.createElementNS(SVG_NS,tag); Object.entries(attrs).forEach(([k,v])=>node.setAttribute(k,String(v))); return node; }
+  function toast(message){const node=$('toast');node.textContent=message;node.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>node.classList.remove('show'),2600);}
+  function setStatus(message){$('statusMessage').innerHTML=message;}
+  function render(){
+    boneLayer.replaceChildren(); jointLayer.replaceChildren();
+    if(showBones){ pairs.forEach(([a,b])=>{const p=joints[a],q=joints[b];boneLayer.appendChild(el('line',{x1:p.x,y1:p.y,x2:q.x,y2:q.y,class:'bone'}));}); }
+    Object.entries(joints).forEach(([key,p])=>{
+      const g=el('g',{'data-joint':key,style:'cursor:grab'});
+      const halo=el('circle',{cx:p.x,cy:p.y,r:key===selected?12:9,fill:p.color,opacity:key===selected?'.22':'.13','pointer-events':'none'});g.appendChild(halo);
+      const circle=el('circle',{cx:p.x,cy:p.y,r:key===selected?6.4:5.3,fill:p.color,class:'joint-dot'+(key===selected?' focus':''),'data-joint':key});g.appendChild(circle);
+      if(showLabels){const t=el('text',{x:p.x+9,y:p.y-8,class:'joint-label','data-joint':key,'text-anchor':'start'}); t.textContent=p.label;g.appendChild(t);}
+      jointLayer.appendChild(g);
+    });
+    renderJointList();renderLegend();
+    if(!meshViewActive)$('viewportStats').innerHTML=`${Object.keys(joints).length} JOINTS · ${pairs.length} BONES<br/>${generated?'PREVIEW UPDATED':'SKELETON PREVIEW'}`; else drawMesh();
+  }
+  function renderJointList(){
+    const list=$('jointList');list.replaceChildren();
+    Object.entries(joints).forEach(([key,p])=>{const b=document.createElement('button');b.className='joint-row'+(key===selected?' active':'');b.innerHTML=`<span class="j-color" style="background:${p.color}"></span><span class="j-name">${pretty(key)}</span><span class="j-coord">${Math.round(p.x)}, ${Math.round(p.y)}</span>`;b.addEventListener('click',()=>{selected=key;render();setStatus(`<strong>${pretty(key)} selected.</strong> Drag its marker in the viewport to adjust position.`);});list.appendChild(b);});
+    $('jointCount').textContent=`${Object.keys(joints).length} markers`;
+  }
+  function renderLegend(){const legend=$('jointLegend');legend.replaceChildren();[['chin','Head'],['shoulder_l','Shoulders'],['elbow_l','Elbows'],['wrist_l','Wrists'],['pelvis','Pelvis'],['knee_l','Knees'],['ankle_l','Ankles']].forEach(([key,label])=>{const i=document.createElement('span');i.className='legend-item';i.innerHTML=`<i class="legend-color" style="background:${joints[key].color}"></i>${label}`;legend.appendChild(i);});}
+  function setJoint(key,x,y,doMirror=true){
+    joints[key].x=clamp(x,44,456);joints[key].y=clamp(y,54,610);
+    const other=mirrorKey(key);
+    if(doMirror && $('mirrorToggle').checked && other){joints[other].x=clamp(500-joints[key].x,44,456);joints[other].y=joints[key].y;}
+    generated=false;render();
+  }
+  function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
+  function reset(){joints=structuredClone(defaults);selected='pelvis';generated=false;render();setStatus('<strong>Pose reset.</strong> Markers returned to the default humanoid placement.');}
+  function autoPlace(){joints=structuredClone(defaults);const preset=$('rigPreset').value;if(preset==='standard'){joints.shoulder_l.x=216;joints.shoulder_r.x=284;joints.elbow_l.x=151;joints.elbow_r.x=349;joints.wrist_l.x=94;joints.wrist_r.x=406;}else if(preset==='arms'){joints.knee_l.y=520;joints.knee_r.y=520;joints.ankle_l.y=590;joints.ankle_r.y=590;}selected='pelvis';generated=false;render();setStatus('<strong>Markers auto-placed.</strong> Review every joint before exporting.');toast('Default joint markers applied.');}
+  function pointFromEvent(evt){const pt=svg.createSVGPoint();pt.x=evt.clientX;pt.y=evt.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse());}
+  svg.addEventListener('pointerdown',(evt)=>{const node=evt.target.closest('[data-joint]');if(!node)return;dragId=node.getAttribute('data-joint');selected=dragId;svg.setPointerCapture?.(evt.pointerId);render();evt.preventDefault();});
+  svg.addEventListener('pointermove',(evt)=>{if(!dragId)return;const p=pointFromEvent(evt);setJoint(dragId,p.x,p.y,true);});
+  const endDrag=()=>{if(dragId){dragId=null;setStatus('<strong>Joint updated.</strong> Review the marker locations and export when ready.');}};
+  svg.addEventListener('pointerup',endDrag);svg.addEventListener('pointercancel',endDrag);window.addEventListener('pointerup',endDrag);
+  $('mirrorToggle').addEventListener('change',()=>toast($('mirrorToggle').checked?'Mirror symmetry enabled.':'Mirror symmetry disabled.'));
+  $('boneToggle').addEventListener('change',()=>{showBones=$('boneToggle').checked;$('meshImportedBones').checked=showBones;render();if(meshViewActive)drawMesh();});
+  $('skeletonToggle').addEventListener('click',()=>{$('boneToggle').checked=!$('boneToggle').checked;showBones=$('boneToggle').checked;$('skeletonToggle').classList.toggle('selected',showBones);$('meshImportedBones').checked=showBones;render();if(meshViewActive)drawMesh();});
+  $('frontView').addEventListener('click',()=>{ $('frontView').classList.add('selected');if(meshViewActive){meshCamera.azimuth=0;meshCamera.elevation=0;meshCamera.panX=0;meshCamera.panY=0;drawMesh();}toast('Front orthographic view active.'); });
+  $('centerView').addEventListener('click',()=>{svg.style.transform='none';meshCamera.zoom=1;meshCamera.panX=0;meshCamera.panY=0;if(meshViewActive)drawMesh();toast('Viewport centered.');});
+  $('resetBtn').addEventListener('click',reset);$('resetJoints').addEventListener('click',reset);$('autoPlace').addEventListener('click',autoPlace);
+  $('rigPreset').addEventListener('change',autoPlace);
+  $('generateBtn').addEventListener('click',()=>{generated=true;render();setStatus('<strong>Skeleton preview generated.</strong> Marker configuration updated; mesh skinning and MDL compilation are not connected.');toast('Skeleton placement preview generated.');});
+  $('exportTop').addEventListener('click',()=>openModal());$('downloadExport').addEventListener('click',exportSelected);
+  function openModal(){$('exportModal').classList.add('open');}
+  function closeModal(){$('exportModal').classList.remove('open');}
+  $('closeModal').addEventListener('click',closeModal);$('cancelExport').addEventListener('click',closeModal);$('exportModal').addEventListener('click',(e)=>{if(e.target===$('exportModal'))closeModal();});
+  function rigData(){return {app:'Co-Op Forge — Player Rig Studio',schema_version:'1.0',generated_at:new Date().toISOString(),prototype_notice:'Rig setup only. Generated SMD can use imported OBJ/SMD/GLB geometry, but the source skin weights and animations are not preserved and no GoldSrc MDL is compiled.',target_pipeline:$('targetFormat').value,skeleton_preset:$('rigPreset').value,height_meters:Number($('height').value)||1.8,mirror_symmetry:$('mirrorToggle').checked,loaded_asset:loadedFile?{name:loadedFile.name,extension:extOf(loadedFile.name),size_bytes:loadedFile.size}:null,parsed_asset:meshData?{format:meshData.sourceFormat,file_name:meshData.fileName,vertex_records:meshData.vertices.length,triangles:meshData.triangles.length,materials:[...(meshData.materials||[])],bones:(meshData.bones||[]).map(b=>({id:b.id,name:b.name,parent:b.parent,position:b.position.map(v=>Math.round(v*10000)/10000)})),weighted_vertex_records:meshData.weightedVertices||0,axis: $('meshAxis').value}:qcData?{format:'QC',modelname:qcData.modelname,sequences:qcData.sequences,bodies:qcData.bodies,hitboxes:qcData.hitboxes,directives:qcData.directives}:null,reference_image:referenceFile?{name:referenceFile.name,size_bytes:referenceFile.size,width:referenceDimensions?.width||null,height:referenceDimensions?.height||null,visible:referenceVisible,opacity_percent:Number($('referenceOpacity').value),scale_percent:Number($('referenceScale').value),offset_x:Number($('referenceX').value),offset_y:Number($('referenceY').value)}:null,joints:Object.fromEntries(Object.entries(joints).map(([k,p])=>[k,{x:Math.round(p.x*100)/100,y:Math.round(p.y*100)/100,color:p.color}])),connections:pairs.map(([from,to])=>({from,to}))};}
+  function qcText(referenceName='reference.smd', modelPath='player/custom_player/custom_player.mdl'){
+    const refs=(Array.isArray(referenceName)?referenceName:[referenceName]).map((name)=>String(name||'reference.smd').replace(/[\r\n"\\]/g,'').slice(0,160)||'reference.smd');
+    const safeModel=String(modelPath||'player/custom_player/custom_player.mdl').replace(/[\r\n"\\]/g,'').slice(0,220)||'player/custom_player/custom_player.mdl';
+    const bodyLines=refs.map((name,index)=>`$body "body_${String(index+1).padStart(2,'0')}" "${name}"`).join('\n');
+    return `// Co-Op Forge — Sven Co-op / GoldSrc QC starter template
+// TEMPLATE ONLY: verify sequence names, frame counts, skeleton and hitboxes
+// against the target player model before compiling. This is not a merged QC.
+// Generated reference SMDs use rigid nearest-segment weights.
+
+$modelname "${safeModel}"
+$cd "."
+$cdtexture "."
+
+${bodyLines}
+
+$eyeposition 0 0 64
+$origin 0 0 0
+$bbox -16 -16 0 16 16 72
+$cbox -16 -16 0 16 16 72
+
+// Replace with sequence SMDs compatible with the target player's required set.
+$sequence "idle" "idle.smd" fps 30 loop
+
+// Next: verify materials, hitboxes, vertex-to-bone assignments, animation set,
+// and compiler compatibility; then compile with a GoldSrc/Sven Co-op toolchain.
+`;
+  }
+  function downloadBlob(name,content,mime){const blob=new Blob([content],{type:mime});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  function safeBaseName(name){return String(name||'sven_player').replace(/\.[^.]+$/,'').replace(/[^a-z0-9_-]+/gi,'_').replace(/^_+|_+$/g,'').slice(0,80)||'sven_player';}
+  function setPipelineStatus(message,kind=''){const n=$('pipelineStatus');n.textContent=message;n.className='pipeline-status'+(kind?' '+kind:'');}
+  function updatePipelineControls(){if($('pipelineSmd'))$('pipelineSmd').disabled=!(meshData&&meshData.triangles&&meshData.triangles.length);}
+  function v3Add(a,b){return a.map((v,i)=>v+b[i]);}
+  function v3Sub(a,b){return a.map((v,i)=>v-b[i]);}
+  function v3Scale(a,s){return a.map(v=>v*s);}
+  function v3Lerp(a,b,t){return a.map((v,i)=>v+(b[i]-v)*t);}
+  function v3Dot(a,b){return a.reduce((sum,v,i)=>sum+v*b[i],0);}
+  function v3Cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
+  function v3Unit(a,fallback=[0,0,1]){const n=Math.hypot(...a);return n>1e-12?a.map(v=>v/n):fallback.slice();}
+  function pointSegmentDistanceSq(p,a,b){const ab=v3Sub(b,a),den=v3Dot(ab,ab);if(den<1e-12)return v3Dot(v3Sub(p,a),v3Sub(p,a));const t=clamp(v3Dot(v3Sub(p,a),ab)/den,0,1);const q=v3Add(a,v3Scale(ab,t)),d=v3Sub(p,q);return v3Dot(d,d);}
+  function buildOutputGeometry(){
+    if(!meshData||!Array.isArray(meshData.vertices)||!meshData.triangles?.length)throw new Error('Import a valid OBJ, SMD or GLB mesh first.');
+    const source=meshData.vertices.map(v=>axisPoint(v));const bounds=boundsFor(source);const sourceHeight=bounds.hi[2]-bounds.lo[2];if(!Number.isFinite(sourceHeight)||sourceHeight<1e-9)throw new Error('The mesh has no usable vertical extent. Check the selected up axis.');
+    const fit=$('fitGoldSrcScale')?.checked!==false;const requestedMeters=clamp(Number($('height').value)||1.8,.1,5);const scale=fit?(requestedMeters*39.3700787402/sourceHeight):1;
+    const centerX=(bounds.lo[0]+bounds.hi[0])/2,centerY=(bounds.lo[1]+bounds.hi[1])/2;
+    const positions=source.map(p=>[(p[0]-centerX)*scale,(p[1]-centerY)*scale,(p[2]-bounds.lo[2])*scale]);
+    const outBounds=boundsFor(positions);return {positions,bounds:outBounds,scale,fit,requestedMeters,sourceHeight,originalBounds:bounds};
+  }
+  function buildGeneratedRig(output){
+    const lo=output.bounds.lo,hi=output.bounds.hi,rangeX=hi[0]-lo[0],rangeY=hi[1]-lo[1],height=hi[2]-lo[2];
+    const mapMarker=(key)=>{const j=joints[key];const fx=clamp((j.x-94)/(406-94),0,1),fz=clamp(1-(j.y-86)/(604-86),0,1);return [lo[0]+fx*rangeX,(lo[1]+hi[1])/2,lo[2]+fz*height];};
+    const pelvis=mapMarker('pelvis'),shoulderL=mapMarker('shoulder_l'),shoulderR=mapMarker('shoulder_r');
+    const chest=v3Lerp(v3Lerp(shoulderL,shoulderR,.5),pelvis,.43),spineMid=v3Lerp(pelvis,chest,.53),chin=mapMarker('chin'),headTop=[chin[0],chin[1],Math.min(hi[2],chin[2]+height*.115)],headEnd=[chin[0],chin[1],Math.min(hi[2]+height*.005,headTop[2]+height*.035)];
+    const wristL=mapMarker('wrist_l'),wristR=mapMarker('wrist_r'),elbowL=mapMarker('elbow_l'),elbowR=mapMarker('elbow_r');
+    const handL=v3Add(wristL,v3Scale(v3Sub(wristL,elbowL),.20)),handR=v3Add(wristR,v3Scale(v3Sub(wristR,elbowR),.20));
+    const ankleL=mapMarker('ankle_l'),ankleR=mapMarker('ankle_r'),forward=[0,Math.max(height*.075,.05),0];
+    const footL=v3Add(ankleL,forward),footR=v3Add(ankleR,forward),toeL=v3Add(footL,v3Scale(forward,.75)),toeR=v3Add(footR,v3Scale(forward,.75));
+    const pts={root:[0,0,0],pelvis,spine_mid:spineMid,chest,chin,head_top:headTop,head_end:headEnd,shoulder_l:shoulderL,shoulder_r:shoulderR,elbow_l:elbowL,elbow_r:elbowR,wrist_l:wristL,wrist_r:wristR,hand_l:handL,hand_r:handR,knee_l:mapMarker('knee_l'),knee_r:mapMarker('knee_r'),ankle_l:ankleL,ankle_r:ankleR,foot_l:footL,foot_r:footR,toe_l:toeL,toe_r:toeR};
+    const definitions=[
+      ['Bip01','root','pelvis',-1],['Bip01 Pelvis','pelvis','spine_mid',0],['Bip01 Spine','spine_mid','chest',1],['Bip01 Spine1','chest','chin',2],['Bip01 Neck','chin','head_top',3],['Bip01 Head','head_top','head_end',4],
+      ['Bip01 L Clavicle','chest','shoulder_l',3],['Bip01 L UpperArm','shoulder_l','elbow_l',6],['Bip01 L Forearm','elbow_l','wrist_l',7],['Bip01 L Hand','wrist_l','hand_l',8],
+      ['Bip01 R Clavicle','chest','shoulder_r',3],['Bip01 R UpperArm','shoulder_r','elbow_r',10],['Bip01 R Forearm','elbow_r','wrist_r',11],['Bip01 R Hand','wrist_r','hand_r',12],
+      ['Bip01 L Thigh','pelvis','knee_l',1],['Bip01 L Calf','knee_l','ankle_l',14],['Bip01 L Foot','ankle_l','foot_l',15],['Bip01 L Toe0','foot_l','toe_l',16],
+      ['Bip01 R Thigh','pelvis','knee_r',1],['Bip01 R Calf','knee_r','ankle_r',18],['Bip01 R Foot','ankle_r','foot_r',19],['Bip01 R Toe0','foot_r','toe_r',20]
+    ].map((d,id)=>({id,name:d[0],headKey:d[1],tailKey:d[2],parent:d[3],head:pts[d[1]],tail:pts[d[2]]}));
+    return {points:pts,bones:definitions};
+  }
+  function sourceCornerAttributes(tri,cornerIndex,vertexIndex){
+    if(meshData.sourceFormat==='OBJ'&&tri.corners){const c=tri.corners[cornerIndex]||{};return {normal:c.vn>=0?meshData.normals?.[c.vn]:null,uv:c.vt>=0?meshData.texcoords?.[c.vt]:null};}
+    const a=meshData.vertexData?.[vertexIndex];return {normal:a?.normal||null,uv:a?.uv||null};
+  }
+  function buildRiggedSMD(){
+    if(!$('autoRigidWeights').checked)throw new Error('Enable rigid bone assignment to create a rigged SMD.');
+    const output=buildOutputGeometry(),rig=buildGeneratedRig(output),bones=rig.bones,positions=output.positions;
+    const MAX_BONES=128,MAX_TRIANGLES=4080,MAX_UNIQUE_VERTICES=2048,MAX_SUBMODELS=32;
+    if(bones.length>MAX_BONES)throw new Error(`Generated skeleton has ${bones.length} bones; classic GoldSrc commonly permits at most ${MAX_BONES}.`);
+    if(meshData.triangles.length>250000)throw new Error('Triangle count exceeds the browser exporter safety limit of 250,000. Simplify the mesh before export.');
+    const cleanMaterial=(m)=>String(m||'material').replace(/[\r\n\t]/g,'_').replace(/\s+/g,'_').replace(/["']/g,'').slice(0,180)||'material';
+    const fmt=n=>{if(!Number.isFinite(n))throw new Error('A non-finite number was detected in the mesh.');return (Math.abs(n)<0.0000005?0:n).toFixed(6);};
+    const normalOf=(tri,cornerIndex,vertexIndex,faceNormal)=>{const raw=sourceCornerAttributes(tri,cornerIndex,vertexIndex).normal;if(!raw||raw.length<3||!raw.every(Number.isFinite))return faceNormal;return v3Unit(axisPoint(raw),faceNormal);};
+    const nearestBone=(position)=>{let best=0,bestD=Infinity;for(const bone of bones){const d=pointSegmentDistanceSq(position,bone.head,bone.tail);if(d<bestD){bestD=d;best=bone.id;}}return best;};
+    const triangleRecords=[];let skipped=0;
+    for(const tri of meshData.triangles){
+      if(!Array.isArray(tri.indices)||tri.indices.length<3){skipped++;continue;}
+      const indices=tri.indices.slice(0,3);if(indices.some(i=>!Number.isInteger(i)||i<0||i>=positions.length)){skipped++;continue;}
+      const a=positions[indices[0]],b=positions[indices[1]],c=positions[indices[2]],faceNormal=v3Unit(v3Cross(v3Sub(b,a),v3Sub(c,a)),[0,0,1]),material=cleanMaterial(tri.material),corners=[];
+      for(let k=0;k<3;k++){
+        const idx=indices[k],pos=positions[idx],attr=sourceCornerAttributes(tri,k,idx),n=normalOf(tri,k,idx,faceNormal),uv=attr.uv&&attr.uv.length>=2&&attr.uv.slice(0,2).every(Number.isFinite)?attr.uv:[0,0],boneId=nearestBone(pos);
+        const line=`${boneId} ${fmt(pos[0])} ${fmt(pos[1])} ${fmt(pos[2])} ${fmt(n[0])} ${fmt(n[1])} ${fmt(n[2])} ${fmt(uv[0])} ${fmt(uv[1])}`;
+        corners.push({line,key:`${material}|${line}`,boneId,position:pos,normal:n,uv});
+      }
+      triangleRecords.push({material,corners});
+    }
+    if(!triangleRecords.length)throw new Error('No valid triangles remain after compatibility checks.');
+    const chunks=[];let current={triangles:[],unique:new Set(),materials:new Set(),uniquePositions:new Set(),uniqueNormals:new Set()};
+    const flush=()=>{if(current.triangles.length){chunks.push(current);current={triangles:[],unique:new Set(),materials:new Set(),uniquePositions:new Set(),uniqueNormals:new Set()};}};
+    for(const record of triangleRecords){
+      const wouldAdd=new Set(record.corners.map(c=>c.key).filter(key=>!current.unique.has(key)));
+      if(current.triangles.length&&(current.triangles.length>=MAX_TRIANGLES||current.unique.size+wouldAdd.size>MAX_UNIQUE_VERTICES))flush();
+      current.triangles.push(record);current.materials.add(record.material);
+      for(const corner of record.corners){current.unique.add(corner.key);current.uniquePositions.add(corner.position.map(fmt).join(','));current.uniqueNormals.add(corner.normal.map(fmt).join(','));}
+    }
+    flush();
+    if(chunks.length>MAX_SUBMODELS)throw new Error(`The mesh needs ${chunks.length} SMD submodels to stay within ${MAX_TRIANGLES} triangles and ${MAX_UNIQUE_VERTICES} estimated unique vertices per part; classic GoldSrc commonly allows at most ${MAX_SUBMODELS} submodels. Reduce or split the mesh in Blender.`);
+    const makeText=(chunk)=>{
+      const lines=['version 1','nodes',...bones.map(b=>`${b.id} "${b.name}" ${b.parent}`),'end','skeleton','time 0'];
+      for(const bone of bones){const local=bone.parent<0?bone.head:v3Sub(bone.head,bones[bone.parent].head);lines.push(`${bone.id} ${fmt(local[0])} ${fmt(local[1])} ${fmt(local[2])} 0 0 0`);}
+      lines.push('end','triangles');for(const tri of chunk.triangles){lines.push(tri.material,...tri.corners.map(c=>c.line));}lines.push('end','');return lines.join('\n');
+    };
+    const smdChunks=chunks.map((chunk,i)=>({index:i+1,text:makeText(chunk),triangleCount:chunk.triangles.length,uniqueVertexCount:chunk.unique.size,uniquePositionCount:chunk.uniquePositions.size,uniqueNormalCount:chunk.uniqueNormals.size,materials:[...chunk.materials]}));
+    return {text:smdChunks.length===1?smdChunks[0].text:null,chunks:smdChunks,output,rig,triangleCount:triangleRecords.length,skippedTriangles:skipped,boneCount:bones.length,uniqueVertexCount:smdChunks.reduce((n,c)=>n+c.uniqueVertexCount,0),uniquePositionCount:smdChunks.reduce((n,c)=>n+c.uniquePositionCount,0),uniqueNormalCount:smdChunks.reduce((n,c)=>n+c.uniqueNormalCount,0),materialCount:new Set(smdChunks.flatMap(c=>c.materials)).size};
+  }
+  function projectQcText(base,referenceFileName){return qcText(referenceFileName,`player/custom_player/${base}.mdl`);}
+  function downloadBridge(){const source=$('blenderBridgeSource').textContent.replace(/^\n|\n$/g,'');downloadBlob('co_op_forge_blender_bridge.py',source,'text/x-python');setPipelineStatus('Blender bridge downloaded from the code embedded in this webpage. Run it inside Blender; it cannot run directly in the browser.','ok');toast('Blender bridge .py downloaded.');}
+  function crc32(bytes){let crc=0xffffffff;for(let i=0;i<bytes.length;i++){crc^=bytes[i];for(let k=0;k<8;k++)crc=(crc>>>1)^((crc&1)?0xedb88320:0);}return (crc^0xffffffff)>>>0;}
+  function concatBytes(parts){const total=parts.reduce((s,p)=>s+p.length,0),out=new Uint8Array(total);let offset=0;for(const part of parts){out.set(part,offset);offset+=part.length;}return out;}
+  function zipStored(files){
+    const enc=new TextEncoder(),locals=[],centrals=[];let offset=0;const now=new Date(),dosTime=((now.getHours()&31)<<11)|((now.getMinutes()&63)<<5)|((Math.floor(now.getSeconds()/2))&31),dosDate=(((Math.max(1980,now.getFullYear())-1980)&127)<<9)|(((now.getMonth()+1)&15)<<5)|(now.getDate()&31);
+    for(const file of files){const name=enc.encode(file.name.replace(/\\/g,'/')),data=file.bytes instanceof Uint8Array?file.bytes:enc.encode(String(file.content??''));if(name.length>65535)throw new Error('ZIP path is too long.');const crc=crc32(data),local=new Uint8Array(30+name.length),ld=new DataView(local.buffer);ld.setUint32(0,0x04034b50,true);ld.setUint16(4,20,true);ld.setUint16(6,0x0800,true);ld.setUint16(8,0,true);ld.setUint16(10,dosTime,true);ld.setUint16(12,dosDate,true);ld.setUint32(14,crc,true);ld.setUint32(18,data.length,true);ld.setUint32(22,data.length,true);ld.setUint16(26,name.length,true);ld.setUint16(28,0,true);local.set(name,30);locals.push(local,data);
+      const central=new Uint8Array(46+name.length),cd=new DataView(central.buffer);cd.setUint32(0,0x02014b50,true);cd.setUint16(4,20,true);cd.setUint16(6,20,true);cd.setUint16(8,0x0800,true);cd.setUint16(10,0,true);cd.setUint16(12,dosTime,true);cd.setUint16(14,dosDate,true);cd.setUint32(16,crc,true);cd.setUint32(20,data.length,true);cd.setUint32(24,data.length,true);cd.setUint16(28,name.length,true);cd.setUint16(30,0,true);cd.setUint16(32,0,true);cd.setUint16(34,0,true);cd.setUint16(36,0,true);cd.setUint32(38,0,true);cd.setUint32(42,offset,true);central.set(name,46);centrals.push(central);offset+=local.length+data.length;
+    }
+    const centralBytes=concatBytes(centrals),localBytes=concatBytes(locals),end=new Uint8Array(22),ed=new DataView(end.buffer);ed.setUint32(0,0x06054b50,true);ed.setUint16(4,0,true);ed.setUint16(6,0,true);ed.setUint16(8,files.length,true);ed.setUint16(10,files.length,true);ed.setUint32(12,centralBytes.length,true);ed.setUint32(16,localBytes.length,true);ed.setUint16(20,0,true);return concatBytes([localBytes,centralBytes,end]);
+  }
+  async function buildProjectPackage(){
+    const base=safeBaseName(loadedFile?.name||'sven_player'),files=[];const rig=JSON.stringify(rigData(),null,2),bridge=$('blenderBridgeSource').textContent.replace(/^\n|\n$/g,'');
+    files.push({name:`${base}_rig_setup.json`,content:rig},{name:'co_op_forge_blender_bridge.py',content:bridge});
+    let smdNames=[],smdBuilt=null;
+    if(meshData?.triangles?.length){if(!$('autoRigidWeights').checked)throw new Error('Enable “Rebuild a rigid-weight reference SMD” to package the mesh with its matching QC starter.');smdBuilt=buildRiggedSMD();smdNames=smdBuilt.chunks.map((chunk)=>smdBuilt.chunks.length===1?`${base}_reference.smd`:`${base}_reference_part${String(chunk.index).padStart(2,'0')}.smd`);smdBuilt.chunks.forEach((chunk,i)=>files.push({name:smdNames[i],content:chunk.text}));}
+    const qcName=`${base}_player_template.qc`;files.push({name:qcName,content:projectQcText(base,smdBuilt?smdNames:'reference.smd')});
+    const report=buildCompatibilityReport(smdBuilt);files.push({name:`${base}_goldsrc_compatibility_report.json`,content:JSON.stringify(report,null,2)});
+    if(referenceFile){try{files.push({name:`references/${referenceFile.name.replace(/[\/\\]/g,'_').slice(0,120)||'reference_image'}`,bytes:new Uint8Array(await referenceFile.arrayBuffer())});}catch(e){setPipelineStatus('Reference image could not be embedded in the ZIP: '+e.message,'warn');}}
+    const listed=smdNames.length?smdNames.map(n=>`- ${n}: generated rigid-weight SMD part.`).join('\n'):'- No generated reference SMD: import a mesh to enable mesh output.';
+    const readme=`CO-OP FORGE — PROJECT PACKAGE\n\nIncluded files are generated locally by the single-page Co-Op Forge app.\n\n- ${base}_rig_setup.json: marker setup, source metadata, reference settings.\n- ${qcName}: starter QC with ${smdNames.length||1} body part(s); verify sequence files and player requirements.\n${listed}\n- ${base}_goldsrc_compatibility_report.json: structural preflight checks and known limitations.\n- co_op_forge_blender_bridge.py: optional script to run inside Blender for armature creation from rig JSON.\n- references/: selected reference image, when one was imported.\n\nIMPORTANT\nThe SMD parts use inferred nearest-segment bone assignments and a newly generated generic humanoid skeleton. For imported SMD/GLB files this does not preserve the original skeleton names, source skin weights, animation set, hitbox layout, morph targets, or full texture material data. Texture conversion to the target GoldSrc palette/format is still a separate step.\n\nThis browser app does not compile a playable GoldSrc/Sven Co-op MDL. Use a compatible StudioMDL toolchain and test the compiled result in a model viewer and the game. The compatibility report is not a compile certification.\n`;
+    files.push({name:'README_workflow.txt',content:readme});const zip=zipStored(files);downloadBlob(`${base}_co_op_forge_project.zip`,zip,'application/zip');setPipelineStatus(`Project ZIP built with ${files.length} files${smdBuilt?`, split into ${smdBuilt.chunks.length} SMD part(s), ${smdBuilt.triangleCount.toLocaleString()} triangles total`:''}${referenceFile?', including the reference image':''}. Read the compatibility report before compiling.`,'ok');toast('Complete project ZIP downloaded.');
+  }
+  function buildCompatibilityReport(prebuilt=null){
+    const checks=[];let built=prebuilt;
+    const add=(status,code,message)=>checks.push({status,code,message});
+    add('INFO','target','Target: classic GoldSrc-compatible SMD/QC, intended for verification with a Sven Co-op-compatible StudioMDL compiler.');
+    if(!meshData||!Array.isArray(meshData.triangles)||!meshData.triangles.length){add('FAIL','mesh_geometry','No triangle mesh is loaded. Import a valid OBJ, SMD, or supported GLB before generating a reference SMD.');}
+    else {
+      add('PASS','mesh_geometry',`${meshData.triangles.length.toLocaleString()} source triangles parsed from ${meshData.sourceFormat||'unknown'} input.`);
+      const parseFailures=Number(meshData.invalidTriangles||0)+Number(meshData.invalidFaces||0);if(parseFailures)add('FAIL','source_triangles',`${parseFailures} source triangle/face record(s) failed parsing.`);else add('PASS','source_triangles','No parser-reported invalid source triangle/face records.');
+      if(Object.values(joints).some(j=>!Number.isFinite(j.x)||!Number.isFinite(j.y)))add('FAIL','joint_coordinates','One or more rig markers contain non-finite coordinates.');else add('PASS','joint_coordinates','Rig marker coordinates are finite.');
+      const h=Number($('height').value);if(!Number.isFinite(h)||h<.1||h>5)add('FAIL','scale','Requested character height must be between 0.1 and 5 meters.');else add('PASS','scale',`Requested height is ${h} meters; confirm the chosen scale against the original target model.`);
+      try{if(!built&&$('autoRigidWeights').checked)built=buildRiggedSMD();}catch(e){add('FAIL','smd_build',e.message||'SMD generation failed.');}
+      if(built){
+        add('PASS','bone_limit',`${built.boneCount} generated bones; common classic GoldSrc ceiling is 128.`);
+        const partCount=built.chunks.length;add(partCount<=32?'PASS':'FAIL','submodel_limit',`${partCount} generated SMD part(s); common classic GoldSrc ceiling is 32 submodels.`);
+        const maxTris=Math.max(...built.chunks.map(c=>c.triangleCount)),maxVerts=Math.max(...built.chunks.map(c=>c.uniqueVertexCount));
+        add(maxTris<=4080?'PASS':'FAIL','triangles_per_smd',`Largest SMD has ${maxTris} triangles; commonly cited classic limit is 4,080 per SMD.`);
+        add(maxVerts<=2048?'PASS':'FAIL','vertices_per_smd',`Largest SMD has ${maxVerts} estimated unique (material, bone, position, normal, UV) vertex records; commonly cited limit is 2,048. This is an estimate; StudioMDL is authoritative.`);
+        add('PASS','rigid_weights','Generated SMD records assign each corner to exactly one generated bone, matching the classic rigid-weight model.');
+        if(built.skippedTriangles)add('FAIL','skipped_triangles',`${built.skippedTriangles} invalid triangle(s) were skipped during SMD generation.`);else add('PASS','skipped_triangles','No triangles skipped during SMD generation.');
+        if(built.materialCount)add('WARN','material_names',`${built.materialCount} material name(s) are referenced. This app does not generate or convert GoldSrc indexed BMP textures; provide valid matching textures.`);
+      }else if($('autoRigidWeights').checked===false)add('FAIL','rigid_weights','Rigid-weight SMD generation is disabled. Enable it to run a full mesh preflight.');
+      if(meshData.sourceFormat==='GLB'){
+        add('WARN','glb_rig_conversion','The GLB is rebuilt against the generated humanoid rig; its original joint hierarchy and vertex weights are not preserved in SMD output.');
+        if(meshData.glbInfo?.animations)add('WARN','glb_animations',`${meshData.glbInfo.animations} GLB animation clip(s) detected; they are not retargeted or exported.`);
+        const gltfMaterialsWithTextures=(meshData.glbInfo?.warnings||[]).some(x=>/texture references/i.test(x));if(gltfMaterialsWithTextures)add('WARN','glb_textures','GLB texture maps are not converted into GoldSrc textures by this browser exporter.');
+        if((meshData.glbInfo?.warnings||[]).some(x=>/Morph targets/i.test(x)))add('WARN','glb_morphs','Morph targets are present and not transferred to SMD. Bake or remove them in Blender if required.');
+        const used=meshData.glbInfo?.extensionsUsed||[];if(used.length)add('INFO','glb_extensions',`Extensions used by source asset: ${used.join(', ')}. Unsupported required extensions cause import to fail; optional extension data may not be preserved.`);
+      }
+      if(meshData.sourceFormat==='SMD')add('WARN','source_rig','The source SMD skeleton and pose are replaced by the generated rig in this exporter. Do not use this result as an animation-compatible replacement without matching all source bone names/poses and sequences.');
+      if(meshData.sourceFormat==='OBJ')add('WARN','source_rig','OBJ has no standard rig/skin information; this export assigns vertices by nearest generated bone segment.');
+    }
+    add('WARN','qc_sequences','The QC is a starter template containing a placeholder idle sequence; replace it with real sequence SMDs, model-specific hitboxes, eye position, bbox/cbox and required Sven Co-op player sequences.');
+    add('WARN','compile_test','No browser preflight can prove compiler or in-game compatibility. Compile with the exact target StudioMDL build, inspect the compiled MDL, then test in Sven Co-op.');
+    add('WARN','animations','Existing animation clips and animation-to-bone compatibility are not automatically preserved by this browser workflow.');
+    const failed=checks.filter(c=>c.status==='FAIL').length,warnings=checks.filter(c=>c.status==='WARN').length,passed=checks.filter(c=>c.status==='PASS').length;
+    return {app:'Co-Op Forge',report_version:'1.0',created_at:new Date().toISOString(),target:'GoldSrc / Sven Co-op SMD-QC workflow',certification:'NOT_CERTIFIED — external StudioMDL compilation and in-game testing required',overall:failed?'BLOCKED_BY_PREFLIGHT_FAILURES':warnings?'PREFLIGHT_WITH_WARNINGS':'STRUCTURAL_PREFLIGHT_ONLY',summary:{passed,warnings,failed},source:loadedFile?{name:loadedFile.name,extension:extOf(loadedFile.name),bytes:loadedFile.size}:null,generated_smd:built?{parts:built.chunks.map(c=>({index:c.index,triangles:c.triangleCount,estimated_unique_vertex_records:c.uniqueVertexCount,unique_positions:c.uniquePositionCount,unique_normals:c.uniqueNormalCount,materials:c.materials})),total_triangles:built.triangleCount,bones:built.boneCount,materials:built.materialCount}:null,checks};
+  }
+  function validateCurrentExport(){
+    const report=buildCompatibilityReport(),s=report.summary;
+    const detail=`Preflight: ${s.passed} pass, ${s.warnings} warning(s), ${s.failed} blocker(s). `+(report.overall==='BLOCKED_BY_PREFLIGHT_FAILURES'?'Resolve blocker(s) first. ': 'External compile and in-game testing remain mandatory. ')+`Status: ${report.overall.replaceAll('_',' ').toLowerCase()}.`;
+    setPipelineStatus(detail,report.summary.failed?'warn':report.summary.warnings?'warn':'ok');toast(report.summary.failed?'Preflight found blockers.':`Preflight complete: ${s.warnings} warning(s).`);
+  }
+  $('pipelineReport').addEventListener('click',()=>{try{const report=buildCompatibilityReport();const base=safeBaseName(loadedFile?.name||'sven_player');downloadBlob(`${base}_goldsrc_compatibility_report.json`,JSON.stringify(report,null,2),'application/json');const s=report.summary;setPipelineStatus(`Compatibility report downloaded: ${s.passed} pass, ${s.warnings} warning(s), ${s.failed} blocker(s). This report is not a compiler certification.`,s.failed?'warn':'ok');}catch(err){setPipelineStatus(err.message||'Compatibility report failed.','warn');}});
+  $('pipelineJson').addEventListener('click',()=>{const base=safeBaseName(loadedFile?.name||'sven_player');downloadBlob(`${base}_rig_setup.json`,JSON.stringify(rigData(),null,2),'application/json');setPipelineStatus('Rig setup JSON downloaded. It records image metadata, not the binary image; use the project ZIP to include the reference file.','ok');});
+  $('pipelineQc').addEventListener('click',()=>{try{const base=safeBaseName(loadedFile?.name||'sven_player');let refs='reference.smd';if(meshData?.triangles?.length){const built=buildRiggedSMD();refs=built.chunks.map(chunk=>built.chunks.length===1?`${base}_reference.smd`:`${base}_reference_part${String(chunk.index).padStart(2,'0')}.smd`);}downloadBlob(`${base}_player_template.qc`,projectQcText(base,refs),'text/plain');setPipelineStatus('QC starter downloaded with the current SMD body parts. Confirm sequence names, textures, hitboxes, and the required player animation set before compiling.','warn');}catch(err){setPipelineStatus(err.message||'QC export failed.','warn');}});
+  $('pipelineSmd').addEventListener('click',()=>{try{const base=safeBaseName(loadedFile?.name||'sven_player'),built=buildRiggedSMD();if(built.chunks.length===1){downloadBlob(`${base}_reference.smd`,built.chunks[0].text,'text/plain');}else{const names=built.chunks.map(chunk=>`${base}_reference_part${String(chunk.index).padStart(2,'0')}.smd`),files=built.chunks.map((chunk,i)=>({name:names[i],content:chunk.text}));files.push({name:`${base}_player_template.qc`,content:projectQcText(base,names)});files.push({name:'README_split_smd.txt',content:`SMD export was split into ${built.chunks.length} body parts to stay within estimated classic GoldSrc per-SMD vertex/triangle limits. Verify material textures and sequence files, then compile with the target StudioMDL and test in-game.
+`});downloadBlob(`${base}_reference_smd_parts.zip`,zipStored(files),'application/zip');}setPipelineStatus(`Built ${built.chunks.length} SMD part(s): ${built.triangleCount.toLocaleString()} triangles, ${built.boneCount} bones; largest part has ${Math.max(...built.chunks.map(c=>c.triangleCount))} triangles and ${Math.max(...built.chunks.map(c=>c.uniqueVertexCount))} estimated unique vertex records. Review the compatibility report and compile with your target toolchain.`, 'ok');toast('SMD output generated.');}catch(err){setPipelineStatus(err.message||'SMD generation failed.','warn');toast(err.message||'SMD generation failed.');}});
+  $('pipelineBridge').addEventListener('click',downloadBridge);
+  $('pipelinePackage').addEventListener('click',()=>buildProjectPackage().catch(err=>{setPipelineStatus('ZIP build failed: '+(err.message||err),'warn');toast('Could not create project ZIP.');}));
+  $('pipelineValidate').addEventListener('click',validateCurrentExport);
+  function exportSelected(){const mode=document.querySelector('input[name="exportMode"]:checked')?.value||'json';const safeName=(loadedFile?.name?.replace(/\.[^.]+$/,'').replace(/[^a-z0-9_-]+/gi,'_'))||'sven_player';const data=JSON.stringify(rigData(),null,2);if(mode==='json'||mode==='both')downloadBlob(`${safeName}_rig_setup.json`,data,'application/json');if(mode==='qc'||mode==='both')setTimeout(()=>downloadBlob(`${safeName}_player_template.qc`,qcText(),'text/plain'),mode==='both'?250:0);closeModal();setStatus('<strong>Export prepared.</strong> Downloaded configuration template only; compile with your local GoldSrc tools.');toast(mode==='both'?'Both setup files downloaded.':'Export downloaded.');}
+  function extOf(name){const bits=name.split('.');return bits.length>1?bits.pop().toUpperCase():'FILE';}
+  function formatBytes(bytes){if(bytes<1024)return `${bytes} B`;if(bytes<1048576)return `${(bytes/1024).toFixed(1)} KB`;return `${(bytes/1048576).toFixed(2)} MB`;}
+  async function handleFile(file){
+    if(!file)return;
+    const valid=['OBJ','SMD','QC','GLB','GLTF','FBX','MDL'];const ext=extOf(file.name);
+    if(!valid.includes(ext)){toast('Unsupported file type.');return;}
+    loadedFile=file;qcData=null;meshData=null;meshParsedFor=null;
+    $('fileName').textContent=file.name;$('fileInfo').textContent=`${formatBytes(file.size)} · Local file`; $('fileExt').textContent=ext;$('filecard').style.display='flex';$('fileStatus').textContent='Selected';$('dropzone').style.display='none';
+    $('analysisPanel').style.display='none';$('meshSettings').style.display='none';setViewportMode('rig');
+    let hint='Selected locally. Geometry preview is implemented for OBJ, SMD, and binary GLB; other formats need conversion or the external toolchain.';
+    if(ext==='MDL') hint='GoldSrc .mdl selected. This browser does not decode binary MDL files. Decompile to SMD/QC with a compatible tool (for example Crowbar or a verified GoldSrc toolchain) for editing.';
+    else if(ext==='GLB'){
+      if(file.size>100*1024*1024){hint='GLB exceeds the 100 MB local binary-parser safety limit. Simplify or split the model in Blender, then re-import.';showAnalysis('GLB',null,[{level:'error',text:hint}]);}
+      else {
+        try {
+          const buffer=await file.arrayBuffer();
+          meshData=parseGLB(buffer);meshData.sourceFormat='GLB';meshData.axis='yup';meshData.fileName=file.name;meshParsedFor=file.name;
+          if(!meshData.vertices.length||!meshData.triangles.length)throw new Error('No triangle mesh was found. Ensure the GLB contains triangle/strip/fan primitives with POSITION data.');
+          meshViewActive=true;setViewportMode('mesh');
+          hint=`GLB geometry parsed · ${meshData.vertices.length.toLocaleString()} vertices · ${meshData.triangles.length.toLocaleString()} triangles · ${meshData.bones.length} joints. Meshes, node transforms and basic skin weights were read locally.`;
+          showAnalysis('GLB',meshData,validateGLB(meshData));
+        }catch(err){meshData=null;meshParsedFor=null;setViewportMode('rig');hint=`Could not parse GLB: ${err.message||'invalid binary glTF data'}`;showAnalysis('GLB',null,[{level:'error',text:hint}]);toast('Could not parse GLB file.');}
+      }
+    }else if(ext==='OBJ'||ext==='SMD'||ext==='QC'){
+      if(file.size>60*1024*1024){hint='File is larger than the 60 MB local text-parser safety limit. Split or simplify it in Blender, then re-import.';addAnalysisMessage('File exceeds the local parsing safety limit (60 MB).','error');}
+      else {
+        try {
+          const text=await file.text();
+          if(ext==='OBJ'){
+            meshData=parseOBJ(text);meshData.sourceFormat='OBJ';meshData.axis='yup';meshData.fileName=file.name;meshParsedFor=file.name;
+            if(!meshData.vertices.length||!meshData.triangles.length)throw new Error('No valid OBJ vertices/faces were found. Ensure the file contains v and f records.');
+            meshViewActive=true;setViewportMode('mesh');hint=`OBJ geometry parsed · ${meshData.vertices.length.toLocaleString()} vertices · ${meshData.triangles.length.toLocaleString()} triangles. You can build a generated rigid-weight reference SMD in the integrated pipeline; inspect inferred weights before compiling.`;
+            const objWarnings=[];if(meshData.invalidFaces)objWarnings.push({level:'error',text:`${meshData.invalidFaces} face(s) reference invalid vertex indices and were skipped.`});objWarnings.push({level:'warn',text:'OBJ has no standard skeleton or bone weights. The integrated exporter can generate a rigid-weight reference SMD; inspect its inferred assignments before compiling.'});showAnalysis('OBJ',meshData,objWarnings);
+          }else if(ext==='SMD'){
+            meshData=parseSMD(text);meshData.sourceFormat='SMD';meshData.axis='zup';meshData.fileName=file.name;meshParsedFor=file.name;
+            if(!meshData.vertices.length&&!meshData.bones.length)throw new Error('No SMD triangle geometry or node hierarchy was recognized. Verify the file has version 1 and standard nodes/skeleton/triangles sections.');
+            meshViewActive=true;setViewportMode('mesh');const warnings=validateSMD(meshData);
+            hint=`SMD parsed · ${meshData.triangles.length.toLocaleString()} triangles · ${meshData.bones.length} nodes · ${meshData.materials.size} materials. Drag in the viewport to orbit; scroll to zoom.`;
+            showAnalysis('SMD',meshData,warnings);
+          }else{
+            qcData=parseQC(text);const warnings=validateQC(qcData);
+            hint=`QC directives inspected · ${qcData.sequences.length} sequence(s) · ${qcData.bodies.length} body reference(s). QC is a build script, not mesh geometry.`;
+            showAnalysis('QC',qcData,warnings);
+          }
+        }catch(err){
+          meshData=null;meshParsedFor=null;setViewportMode('rig');hint=`Could not parse ${ext}: ${err.message||'invalid text data'}`;showAnalysis(ext,null,[{level:'error',text:hint}]);toast(`Could not parse ${ext} file.`);
+        }
+      }
+    }else if(ext==='GLTF'||ext==='FBX'){
+      hint=`${ext} selected. Binary GLB is supported directly; external-buffer .gltf and FBX are not parsed in this single-file build. Export a self-contained .glb from Blender for the local preview. No data was uploaded.`;
+      showAnalysis(ext,null,[{level:'warn',text:'This web app directly parses binary GLB 2.0. External-buffer glTF and FBX require conversion; choose GLB export with embedded mesh data.'}]);
+    }
+    $('fileHint').textContent=hint;updatePipelineControls();setStatus(`<strong>${file.name.replace(/[&<>"']/g,'')}</strong> selected. ${meshData?'Mesh preview and diagnostics are available.':'Review the source notes and joint setup before export.'}`);toast(meshData?`Parsed ${file.name} locally.`:`Selected ${file.name} locally.`);
+  }
+  // Parse a self-contained glTF 2.0 Binary (GLB) file without external libraries.
+  // Geometry is flattened into world/bind-pose space for display and generated SMD export.
+  // This intentionally does not render textures, morph targets, or animation clips.
+  function parseGLB(arrayBuffer){
+    const bytes=new Uint8Array(arrayBuffer),view=new DataView(arrayBuffer);
+    if(bytes.byteLength<20)throw new Error('File is too short to be a GLB container.');
+    if(view.getUint32(0,true)!==0x46546c67)throw new Error('Missing glTF binary magic header.');
+    const version=view.getUint32(4,true),declaredLength=view.getUint32(8,true);
+    if(version!==2)throw new Error(`Only GLB 2.0 is supported (file reports version ${version}).`);
+    if(declaredLength!==bytes.byteLength||declaredLength<20)throw new Error('GLB totalLength must exactly match the file size; the header is truncated or contains trailing bytes.');
+    let offset=12,json=null,bin=null,chunkIndex=0;
+    while(offset<declaredLength){
+      if(offset+8>declaredLength)throw new Error('The GLB ends inside a chunk header.');
+      const length=view.getUint32(offset,true),type=view.getUint32(offset+4,true);offset+=8;
+      if(length%4!==0)throw new Error('GLB chunk lengths must be aligned to four bytes.');
+      if(length>declaredLength-offset)throw new Error('GLB chunk extends beyond the declared file length.');
+      if(chunkIndex===0&&type!==0x4e4f534a)throw new Error('The first GLB chunk must be JSON.');
+      const chunk=bytes.subarray(offset,offset+length);
+      if(type===0x4e4f534a){if(json)throw new Error('GLB contains more than one JSON chunk.');const text=new TextDecoder('utf-8',{fatal:true}).decode(chunk).replace(/[\u0000\u0020]+$/g,'');try{json=JSON.parse(text);}catch(e){throw new Error('The GLB JSON chunk is invalid or not valid UTF-8.');}}
+      else if(type===0x004e4942){if(bin)throw new Error('GLB contains more than one BIN chunk.');if(!json)throw new Error('GLB BIN chunk appears before its JSON chunk.');bin=chunk;}
+      offset+=length;chunkIndex++;
+    }
+    if(offset!==declaredLength)throw new Error('GLB chunk boundaries do not match the declared file length.');
+    if(!json||json.asset?.version?.split('.')[0]!=='2')throw new Error('A glTF 2.x JSON chunk was not found.');
+    if(json.asset?.minVersion&&Number.parseFloat(json.asset.minVersion)>2.0)throw new Error(`This asset requires glTF ${json.asset.minVersion}, which is newer than 2.0.`);
+    const safelyHandledRequired=new Set(['KHR_mesh_quantization']);
+    const requiredExtensions=json.extensionsRequired||[],usedExtensions=json.extensionsUsed||[];if(requiredExtensions.some(x=>!usedExtensions.includes(x)))throw new Error('GLB is invalid: extensionsRequired contains an extension not listed in extensionsUsed.');const unsupportedRequired=requiredExtensions.filter(x=>!safelyHandledRequired.has(x));
+    if(unsupportedRequired.length)throw new Error('Cannot preserve required glTF extension(s): '+unsupportedRequired.join(', ')+'. Re-export a GLB with required extensions baked or removed.');
+    const buffers=[];
+    for(const [i,b] of (json.buffers||[]).entries()){
+      if(!Number.isSafeInteger(b.byteLength)||b.byteLength<0)throw new Error(`Buffer ${i} has an invalid byteLength.`);
+      let payload;
+      if(!b.uri){if(i!==0||!bin)throw new Error('A GLB buffer without a URI must refer to the embedded BIN chunk at buffer index 0.');if(b.byteLength>bin.byteLength||bin.byteLength-b.byteLength>3)throw new Error(`GLB BIN chunk length does not match buffer ${i}.`);payload=bin.subarray(0,b.byteLength);}
+      else if(/^data:[^,]*;base64,/i.test(b.uri)){try{const raw=atob(b.uri.slice(b.uri.indexOf(',')+1)),out=new Uint8Array(raw.length);for(let k=0;k<raw.length;k++)out[k]=raw.charCodeAt(k);payload=out;}catch(e){throw new Error(`Embedded data URI for buffer ${i} is malformed.`);}if(payload.byteLength<b.byteLength)throw new Error(`Embedded data URI for buffer ${i} is shorter than its declared byteLength.`);payload=payload.subarray(0,b.byteLength);}
+      else throw new Error('This GLB references an external buffer. Re-export as self-contained GLB or embed all buffers as data URIs.');
+      buffers.push(payload);
+    }
+    if(bin&&(!json.buffers?.length||json.buffers[0]?.uri!==undefined))throw new Error('The GLB BIN chunk is present but is not declared by buffer 0.');
+    if(!buffers.length&&bin)throw new Error('GLB binary data is not declared by the JSON buffer list.');
+    for(const [i,bv] of (json.bufferViews||[]).entries()){const bi=bv.buffer??0,bo=bv.byteOffset??0,bl=bv.byteLength;if(!buffers[bi]||!Number.isSafeInteger(bo)||!Number.isSafeInteger(bl)||bo<0||bl<0||bo+bl>buffers[bi].byteLength)throw new Error(`BufferView ${i} has invalid buffer bounds.`);if(bv.byteStride!==undefined&&(!Number.isInteger(bv.byteStride)||bv.byteStride<4||bv.byteStride>252||bv.byteStride%4!==0))throw new Error(`BufferView ${i} has an invalid byteStride.`);}
+    const componentInfo={5120:{bytes:1,get:'getInt8'},5121:{bytes:1,get:'getUint8'},5122:{bytes:2,get:'getInt16'},5123:{bytes:2,get:'getUint16'},5125:{bytes:4,get:'getUint32'},5126:{bytes:4,get:'getFloat32'}};
+    const typeLayout={SCALAR:[1,1],VEC2:[2,1],VEC3:[3,1],VEC4:[4,1],MAT2:[2,2],MAT3:[3,3],MAT4:[4,4]};
+    const align4=n=>Math.ceil(n/4)*4;
+    function decodeAccessor(index){
+      const a=json.accessors?.[index];if(!a)throw new Error(`Missing glTF accessor ${index}.`);
+      const count=a.count,layout=typeLayout[a.type],info=componentInfo[a.componentType];
+      if(!Number.isSafeInteger(count)||count<0||!layout||!info)throw new Error(`Invalid accessor ${index}.`);
+      const [rows,cols]=layout,components=rows*cols,matrix=String(a.type).startsWith('MAT'),columnBytes=matrix&&info.bytes<4?align4(rows*info.bytes):rows*info.bytes,elementBytes=matrix?columnBytes*cols:components*info.bytes;
+      if(count*components>20_000_000)throw new Error('Accessor exceeds the local safety limit of 20 million scalar values.');
+      if(a.normalized&&a.componentType===5126)throw new Error(`Accessor ${index} cannot mark FLOAT data as normalized.`);
+      const result=new Array(count*components).fill(0),bvIndex=a.bufferView;
+      const decodeValue=(dv,at)=>{if(at<0||at+info.bytes>dv.byteLength)throw new Error(`Accessor ${index} is truncated.`);let v=info.bytes===1?dv[info.get](at):dv[info.get](at,true);if(a.normalized&&a.componentType!==5126){if(a.componentType===5120)v=Math.max(v/127,-1);else if(a.componentType===5122)v=Math.max(v/32767,-1);else if(a.componentType===5121)v=v/255;else if(a.componentType===5123)v=v/65535;else if(a.componentType===5125)v=v/4294967295;}return v;};
+      const readElement=(dv,base,rowStride,rowIndex)=>{for(let c=0;c<components;c++){const col=matrix?Math.floor(c/rows):0,r=matrix?c%rows:c,at=base+rowIndex*rowStride+(matrix?col*columnBytes+r*info.bytes:c*info.bytes);result[rowIndex*components+c]=decodeValue(dv,at);}};
+      if(bvIndex!==undefined){
+        const bv=json.bufferViews?.[bvIndex];if(!bv)throw new Error(`Accessor ${index} references a missing bufferView.`);
+        const bufferIndex=bv.buffer??0,src=buffers[bufferIndex];if(!src)throw new Error(`Accessor ${index} references unavailable buffer ${bufferIndex}.`);
+        const viewOffset=bv.byteOffset??0,viewLength=bv.byteLength,accessorOffset=a.byteOffset??0;
+        if(!Number.isSafeInteger(viewOffset)||!Number.isSafeInteger(viewLength)||!Number.isSafeInteger(accessorOffset)||viewOffset<0||viewLength<0||accessorOffset<0||viewOffset+viewLength>src.byteLength)throw new Error(`Accessor ${index} references an invalid bufferView range.`);
+        const stride=bv.byteStride??elementBytes;
+        if(!Number.isSafeInteger(stride)||stride<elementBytes||(bv.byteStride!==undefined&&(stride<4||stride>252||stride%4!==0)))throw new Error(`Accessor ${index} has an invalid byteStride.`);
+        if((viewOffset+accessorOffset)%info.bytes!==0)throw new Error(`Accessor ${index} is not aligned to its component size.`);
+        const endNeeded=count?accessorOffset+(count-1)*stride+elementBytes:accessorOffset;
+        if(endNeeded>viewLength)throw new Error(`Accessor ${index} reads beyond its bufferView bounds.`);
+        const dv=new DataView(src.buffer,src.byteOffset+viewOffset,viewLength);
+        for(let r=0;r<count;r++)readElement(dv,accessorOffset,stride,r);
+      }else if(!a.sparse){throw new Error(`Accessor ${index} has no bufferView and no sparse values.`);}
+      if(a.sparse){
+        const sp=a.sparse;if(!Number.isSafeInteger(sp.count)||sp.count<0||sp.count>count)throw new Error(`Accessor ${index} has an invalid sparse count.`);
+        const idxInfo=componentInfo[sp.indices?.componentType];if(!idxInfo||![5121,5123,5125].includes(sp.indices.componentType))throw new Error('Sparse accessor uses an invalid index component type.');
+        const getSparseView=(viewIndex,label)=>{const bv=json.bufferViews?.[viewIndex];if(!bv)throw new Error(`${label} references a missing bufferView.`);if(bv.byteStride!==undefined)throw new Error(`${label} bufferView must not define byteStride.`);const src=buffers[bv.buffer??0];if(!src)throw new Error(`${label} references an unavailable buffer.`);const bo=bv.byteOffset??0,bl=bv.byteLength;if(!Number.isSafeInteger(bo)||!Number.isSafeInteger(bl)||bo<0||bl<0||bo+bl>src.byteLength)throw new Error(`${label} has invalid bounds.`);return {src,bo,bl,dv:new DataView(src.buffer,src.byteOffset+bo,bl)};};
+        const iv=getSparseView(sp.indices.bufferView,'Sparse indices'),iOffset=sp.indices.byteOffset??0;
+        if(!Number.isSafeInteger(iOffset)||iOffset<0||iOffset+sp.count*idxInfo.bytes>iv.bl)throw new Error('Sparse accessor indices are truncated.');
+        const sparseIndices=[];for(let n=0;n<sp.count;n++){const at=iOffset+n*idxInfo.bytes;const v=idxInfo.bytes===1?iv.dv[idxInfo.get](at):iv.dv[idxInfo.get](at,true);if(v<0||v>=count||(n&&v<=sparseIndices[n-1]))throw new Error('Sparse accessor indices must be strictly increasing and in range.');sparseIndices.push(v);}
+        const vv=getSparseView(sp.values.bufferView,'Sparse values'),vOffset=sp.values.byteOffset??0;
+        if(!Number.isSafeInteger(vOffset)||vOffset<0||vOffset+sp.count*elementBytes>vv.bl)throw new Error('Sparse accessor values are truncated.');
+        sparseIndices.forEach((target,n)=>{for(let c=0;c<components;c++){const col=matrix?Math.floor(c/rows):0,r=matrix?c%rows:c,at=vOffset+n*elementBytes+(matrix?col*columnBytes+r*info.bytes:c*info.bytes);result[target*components+c]=decodeValue(vv.dv,at);}});
+      }
+      if(result.some(v=>!Number.isFinite(v)))throw new Error(`Accessor ${index} contains non-finite numeric data.`);
+      return {count,components,data:result,componentType:a.componentType,type:a.type,normalized:!!a.normalized};
+    }
+    const identity=()=>[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
+    function multiply4(a,b){const o=Array(16).fill(0);for(let c=0;c<4;c++)for(let r=0;r<4;r++)for(let k=0;k<4;k++)o[c*4+r]+=a[k*4+r]*b[c*4+k];return o;}
+    function composeNode(n){
+      if(n.matrix&&n.matrix.length===16)return n.matrix.slice();
+      const t=n.translation||[0,0,0],q=n.rotation||[0,0,0,1],s=n.scale||[1,1,1],x=q[0],y=q[1],z=q[2],w=q[3],x2=x+x,y2=y+y,z2=z+z;
+      const xx=x*x2,xy=x*y2,xz=x*z2,yy=y*y2,yz=y*z2,zz=z*z2,wx=w*x2,wy=w*y2,wz=w*z2;
+      return [(1-(yy+zz))*s[0],(xy+wz)*s[0],(xz-wy)*s[0],0,(xy-wz)*s[1],(1-(xx+zz))*s[1],(yz+wx)*s[1],0,(xz+wy)*s[2],(yz-wx)*s[2],(1-(xx+yy))*s[2],0,t[0],t[1],t[2],1];
+    }
+    const nodes=json.nodes||[],parents=new Array(nodes.length).fill(-1);
+    if(nodes.length>100000)throw new Error('GLB node count exceeds the local safety limit.');
+    nodes.forEach((n,i)=>{if(n.matrix!==undefined&&((n.translation!==undefined)||(n.rotation!==undefined)||(n.scale!==undefined)))throw new Error(`Node ${i} defines both matrix and TRS transforms.`);if(n.matrix!==undefined&&(!Array.isArray(n.matrix)||n.matrix.length!==16||!n.matrix.every(Number.isFinite)))throw new Error(`Node ${i} has an invalid matrix transform.`);for(const [key,length] of [['translation',3],['rotation',4],['scale',3]])if(n[key]!==undefined&&(!Array.isArray(n[key])||n[key].length!==length||!n[key].every(Number.isFinite)))throw new Error(`Node ${i} has an invalid ${key} transform.`);for(const c of n.children||[]){if(!Number.isInteger(c)||c<0||c>=nodes.length)throw new Error(`Node ${i} has an invalid child index.`);if(parents[c]!==-1)throw new Error(`Node ${c} has multiple parents, which is not a valid glTF node tree.`);parents[c]=i;}});
+    const local=nodes.map(composeNode),world=new Array(nodes.length),visiting=new Set();
+    function worldAt(i){if(world[i])return world[i];if(visiting.has(i))throw new Error('Node hierarchy contains a cycle.');visiting.add(i);world[i]=parents[i]>=0?multiply4(worldAt(parents[i]),local[i]):local[i];visiting.delete(i);return world[i];}
+    for(let i=0;i<nodes.length;i++){const matrix=worldAt(i);if(!matrix.every(Number.isFinite))throw new Error(`Node ${i} has a non-finite world transform.`);}
+    const transformPoint=(m,p)=>{const x=p[0],y=p[1],z=p[2],w=m[3]*x+m[7]*y+m[11]*z+m[15];const d=Math.abs(w)>1e-12?w:1;return [(m[0]*x+m[4]*y+m[8]*z+m[12])/d,(m[1]*x+m[5]*y+m[9]*z+m[13])/d,(m[2]*x+m[6]*y+m[10]*z+m[14])/d];};
+    const transformDirection=(m,p)=>v3Unit([m[0]*p[0]+m[4]*p[1]+m[8]*p[2],m[1]*p[0]+m[5]*p[1]+m[9]*p[2],m[2]*p[0]+m[6]*p[1]+m[10]*p[2]],[0,0,1]);
+    const transformNormal=(m,n)=>{const a00=m[0],a01=m[4],a02=m[8],a10=m[1],a11=m[5],a12=m[9],a20=m[2],a21=m[6],a22=m[10],c00=a11*a22-a12*a21,c01=a12*a20-a10*a22,c02=a10*a21-a11*a20,c10=a02*a21-a01*a22,c11=a00*a22-a02*a20,c12=a01*a20-a00*a21,c20=a01*a12-a02*a11,c21=a02*a10-a00*a12,c22=a00*a11-a01*a10,det=a00*c00+a01*c01+a02*c02;if(Math.abs(det)<1e-12)return transformDirection(m,n);return v3Unit([(c00*n[0]+c01*n[1]+c02*n[2])/det,(c10*n[0]+c11*n[1]+c12*n[2])/det,(c20*n[0]+c21*n[1]+c22*n[2])/det],[0,0,1]);};
+    const verts=[],vertexData=[],tris=[],materials=new Set(),warnings=[];let weightedVertices=0,invalidWeightSums=0,zeroWeightVertices=0,skinnedMeshCount=0,staticMeshCount=0,skippedPrimitives=0;
+    if((json.extensionsRequired||[]).some(e=>['KHR_draco_mesh_compression','EXT_meshopt_compression'].includes(e)))throw new Error('This GLB requires Draco or meshopt decompression, which is not embedded in this single-file app. Re-export without mesh compression.');
+    const jointNodeSet=new Set();for(const [skinIndex,skin] of (json.skins||[]).entries()){if(!Array.isArray(skin.joints)||!skin.joints.length)throw new Error(`Skin ${skinIndex} has no joint nodes.`);for(const j of skin.joints){if(!Number.isInteger(j)||j<0||j>=nodes.length)throw new Error(`Skin ${skinIndex} references an invalid joint node.`);if(jointNodeSet.has(j))continue;jointNodeSet.add(j);}}
+    const jointNodes=[...jointNodeSet],nodeToBone=new Map(jointNodes.map((n,i)=>[n,i]));
+    const bones=jointNodes.map((nodeIndex,id)=>{let p=parents[nodeIndex];while(p>=0&&!nodeToBone.has(p))p=parents[p];return {id,name:String(nodes[nodeIndex]?.name||`joint_${nodeIndex}`),parent:p>=0?nodeToBone.get(p):-1,position:[world[nodeIndex][12],world[nodeIndex][13],world[nodeIndex][14]],nodeIndex};});
+    const inverseBinds=(json.skins||[]).map((s,skinIndex)=>{if(s.inverseBindMatrices===undefined)return (s.joints||[]).map(()=>identity());const a=decodeAccessor(s.inverseBindMatrices);if(a.type!=='MAT4'||a.componentType!==5126||a.count!==(s.joints||[]).length)throw new Error(`Skin ${skinIndex} inverseBindMatrices must be FLOAT MAT4 with exactly one matrix per joint.`);return Array.from({length:a.count},(_,i)=>a.data.slice(i*16,(i+1)*16));});
+    const nodesToVisit=[],visitedNodes=new Set();
+    const sceneIndex=json.scene??0,scenes=json.scenes||[];
+    if(scenes.length&&(!Number.isInteger(sceneIndex)||sceneIndex<0||sceneIndex>=scenes.length))throw new Error('The default scene index is invalid.');
+    const visitTree=i=>{if(!Number.isInteger(i)||i<0||i>=nodes.length)throw new Error('Scene references an invalid node index.');if(visitedNodes.has(i))return;visitedNodes.add(i);nodesToVisit.push(i);(nodes[i]?.children||[]).forEach(visitTree);};if(scenes[sceneIndex]?.nodes?.length){scenes[sceneIndex].nodes.forEach(visitTree);}else nodes.forEach((n,i)=>{if(parents[i]===-1)visitTree(i);});
+    for(const nodeIndex of nodesToVisit){const node=nodes[nodeIndex];if(node.mesh===undefined)continue;const mesh=json.meshes?.[node.mesh];if(!mesh)throw new Error(`Node ${nodeIndex} references a missing mesh.`);if(node.skin!==undefined&&!json.skins?.[node.skin])throw new Error(`Node ${nodeIndex} references a missing skin.`);const skin=node.skin!==undefined?json.skins[node.skin]:null;const skinJointBoneIds=skin?(skin.joints||[]).map(n=>nodeToBone.get(n)??-1):[];
+      if(skin)skinnedMeshCount++;else staticMeshCount++;
+      for(const prim of mesh.primitives||[]){if(prim.extensions?.KHR_draco_mesh_compression||prim.extensions?.EXT_meshopt_compression)throw new Error('A mesh primitive uses Draco/meshopt compression. Re-export the GLB without geometry compression.');const mode=prim.mode??4;if(![4,5,6].includes(mode)){skippedPrimitives++;continue;}const posAcc=prim.attributes?.POSITION;if(posAcc===undefined){skippedPrimitives++;continue;}
+        const pa=decodeAccessor(posAcc);if(pa.type!=='VEC3')throw new Error('A POSITION accessor is not VEC3.');const na=prim.attributes.NORMAL!==undefined?decodeAccessor(prim.attributes.NORMAL):null,ua=prim.attributes.TEXCOORD_0!==undefined?decodeAccessor(prim.attributes.TEXCOORD_0):null;
+        const jointSets=[];let jointSetGap=false;for(let set=0;set<8;set++){const jiName=`JOINTS_${set}`,weName=`WEIGHTS_${set}`,hasJ=prim.attributes[jiName]!==undefined,hasW=prim.attributes[weName]!==undefined;if(hasJ!==hasW)throw new Error(`Primitive must provide both ${jiName} and ${weName}.`);if(!hasJ){if(set===0&&Array.from({length:7},(_,i)=>i+1).some(n=>prim.attributes[`JOINTS_${n}`]!==undefined||prim.attributes[`WEIGHTS_${n}`]!==undefined))throw new Error('Skin attribute sets must start at JOINTS_0/WEIGHTS_0.');if(jointSets.length)jointSetGap=true;continue;}if(jointSetGap)throw new Error('Skin attribute sets JOINTS_n/WEIGHTS_n must be contiguous, starting at set 0.');const ja=decodeAccessor(prim.attributes[jiName]),wa=decodeAccessor(prim.attributes[weName]);if(ja.type!=='VEC4'||wa.type!=='VEC4'||![5121,5123].includes(ja.componentType)||ja.normalized||![5126,5121,5123].includes(wa.componentType)||(wa.componentType!==5126&&!wa.normalized))throw new Error(`Primitive ${jiName}/${weName} have invalid GLB skin attribute types.`);if(ja.count!==pa.count||wa.count!==pa.count)throw new Error('Skin attribute accessor counts do not match POSITION.');jointSets.push({ja,wa});}
+        if(skin&&jointSets.length===0)warnings.push(`Skinned node ${nodeIndex} has no JOINTS_n/WEIGHTS_n attributes; rigid assignment will be used for export.`);if(!skin&&jointSets.length)throw new Error(`Node ${nodeIndex} has skinning attributes but no skin reference.`);
+        if(na&&(na.type!=='VEC3'||na.count!==pa.count))throw new Error('NORMAL accessor must be VEC3 and match POSITION count.');if(ua&&(ua.type!=='VEC2'||ua.count!==pa.count))throw new Error('TEXCOORD_0 accessor must be VEC2 and match POSITION count.');
+        let idx;if(prim.indices!==undefined){const ia=decodeAccessor(prim.indices);if(ia.type!=='SCALAR'||![5121,5123,5125].includes(ia.componentType)||ia.normalized)throw new Error('Index accessor must be an unsigned, non-normalized SCALAR.');idx=ia.data;}else idx=Array.from({length:pa.count},(_,i)=>i);
+        if(prim.material!==undefined&&(!Number.isInteger(prim.material)||prim.material<0||prim.material>=(json.materials||[]).length))throw new Error('Primitive references a missing material.');const mat=prim.material!==undefined?json.materials?.[prim.material]:null,matName=String(mat?.name||`material_${prim.material??0}`);materials.add(matName);
+        const bindMatrices=skin?(inverseBinds[node.skin]||[]):[];
+        const offsetBase=verts.length;
+        for(let i=0;i<pa.count;i++){
+          const localPos=pa.data.slice(i*3,i*3+3);let p,normal=null,links=[];
+          if(skin&&jointSets.length){let sum=0,acc=[0,0,0],nacc=[0,0,0];for(const set of jointSets){const {ja,wa}=set;for(let k=0;k<4;k++){const weight=wa.data[i*4+k],jointSlot=ja.data[i*4+k];if(!Number.isFinite(weight)||weight<=0)continue;if(!Number.isInteger(jointSlot)||jointSlot<0||jointSlot>=skinJointBoneIds.length)throw new Error(`Vertex ${i} references an invalid skin joint index.`);const boneId=skinJointBoneIds[jointSlot];if(boneId===undefined||boneId<0)throw new Error(`Vertex ${i} references a joint outside the selected skin.`);const ibm=bindMatrices[jointSlot]||identity(),skinMatrix=multiply4(world[skin.joints[jointSlot]],ibm),pp=transformPoint(skinMatrix,localPos);acc=acc.map((v,c)=>v+pp[c]*weight);if(na){const nn=transformNormal(skinMatrix,na.data.slice(i*na.components,i*na.components+3));nacc=nacc.map((v,c)=>v+nn[c]*weight);}sum+=weight;links.push({bone:boneId,weight});}}if(sum>1e-8){p=acc.map(v=>v/sum);if(na)normal=v3Unit(nacc.map(v=>v/sum));if(Math.abs(sum-1)>.01)invalidWeightSums++;}else{zeroWeightVertices++;p=transformPoint(world[nodeIndex],localPos);if(na)normal=transformNormal(world[nodeIndex],na.data.slice(i*na.components,i*na.components+3));}if(links.length>1)weightedVertices++;
+          }else{p=transformPoint(world[nodeIndex],localPos);if(na)normal=transformNormal(world[nodeIndex],na.data.slice(i*na.components,i*na.components+3));}
+          const uv=ua?ua.data.slice(i*ua.components,i*ua.components+2):null;verts.push(p);vertexData.push({position:p,normal,uv,links,bone:links[0]?.bone??0});
+        }
+        const validIndex=n=>Number.isInteger(n)&&n>=0&&n<pa.count;
+        if(idx.some(n=>!validIndex(n)))throw new Error('An index accessor references a missing mesh vertex.');
+        const m=world[nodeIndex],det=m[0]*(m[5]*m[10]-m[9]*m[6])-m[4]*(m[1]*m[10]-m[9]*m[2])+m[8]*(m[1]*m[6]-m[5]*m[2]),reverseWinding=det<0;const addTri=(a,b,c)=>{tris.push({indices:reverseWinding?[offsetBase+b,offsetBase+a,offsetBase+c]:[offsetBase+a,offsetBase+b,offsetBase+c],material:matName});};
+        if(mode===4){for(let i=0;i+2<idx.length;i+=3)addTri(idx[i],idx[i+1],idx[i+2]);}
+        else if(mode===5){for(let i=0;i+2<idx.length;i++)if(i%2===0)addTri(idx[i],idx[i+1],idx[i+2]);else addTri(idx[i+1],idx[i],idx[i+2]);}
+        else {for(let i=1;i+1<idx.length;i++)addTri(idx[0],idx[i],idx[i+1]);}
+      }
+    }
+    if(!verts.length)throw new Error('No POSITION data found in triangle mesh primitives.');if(verts.some(p=>!p.every(Number.isFinite)))throw new Error('A node or skin transform produced non-finite mesh coordinates.');if(vertexData.some(v=>(v.normal&&!v.normal.every(Number.isFinite))||(v.uv&&!v.uv.every(Number.isFinite))))throw new Error('A mesh normal or texture coordinate is non-finite after transforms.');
+    if(skippedPrimitives)warnings.push(`${skippedPrimitives} line/point or unsupported primitive(s) were skipped; only triangles, strips and fans are previewed.`);if(invalidWeightSums)warnings.push(`${invalidWeightSums} vertex(es) had source skin weights that did not sum to approximately 1.0; the preview normalizes them for display.`);if(zeroWeightVertices)warnings.push(`${zeroWeightVertices} vertex(es) had no positive skin weight; their node transform is used as a fallback for preview only.`);
+    if((json.meshes||[]).some(m=>(m.primitives||[]).some(p=>p.targets?.length)))warnings.push('Morph targets were detected but are not applied to the preview.');
+    const optionalExtensions=(json.extensionsUsed||[]).filter(x=>!['KHR_mesh_quantization'].includes(x));if(optionalExtensions.length)warnings.push('Optional glTF extension data is not fully rendered or preserved: '+optionalExtensions.join(', ')+'.');
+    if((json.meshes||[]).some(m=>(m.primitives||[]).some(p=>p.targets?.length)))warnings.push('Morph targets were detected but are not applied to the preview or SMD export.');
+    if((json.materials||[]).some(m=>m.pbrMetallicRoughness?.baseColorTexture||m.normalTexture||m.emissiveTexture))warnings.push('GLB texture references were found. The viewport displays material-based colors, not the actual texture maps.');
+    if((json.animations||[]).length)warnings.push(`${json.animations.length} animation clip(s) detected. Animations are not played or transferred by this browser preview.`);
+    if(!bones.length)warnings.push('No skin joint hierarchy was found. Geometry can still be viewed and assigned to the generated humanoid rig.');
+    if(skinnedMeshCount&&staticMeshCount)warnings.push('Both skinned and static mesh nodes were found; review their relative transforms in the viewport.');
+    return {vertices:verts,vertexData,triangles:tris,materials,bones,weightedVertices,referencedBones:new Set(vertexData.flatMap(v=>(v.links||[]).map(x=>x.bone))),invalidTriangles:0,sourceFormat:'GLB',axis:'yup',glbInfo:{version:2,meshes:(json.meshes||[]).length,nodes:nodes.length,skins:(json.skins||[]).length,animations:(json.animations||[]).length,skinnedMeshCount,staticMeshCount,vertexCount:verts.length,triangleCount:tris.length,extensionsUsed:json.extensionsUsed||[],extensionsRequired:json.extensionsRequired||[],invalidWeightSums,zeroWeightVertices,warnings}};
+  }
+  function validateGLB(m){const w=[];if(m.glbInfo?.skinnedMeshCount)w.push({level:'ok',text:`Parsed ${m.glbInfo.skinnedMeshCount} skinned mesh node(s), ${m.bones.length} source joints and bind-pose geometry.`});else w.push({level:'warn',text:'No usable skin weights were found. The integrated SMD builder will assign vertices to a newly generated humanoid rig.'});if(m.weightedVertices)w.push({level:'warn',text:`${m.weightedVertices.toLocaleString()} source vertices have multiple influences. This exporter remaps geometry to its new rigid rig and does not retain those weights.`});if(m.bones.length>128)w.push({level:'warn',text:`The imported source skin has ${m.bones.length} joints; original joints are not carried into the generated SMD. The generated rig is checked separately.`});for(const message of m.glbInfo?.warnings||[])w.push({level:'warn',text:message});w.push({level:'warn',text:'The current exporter does not preserve GLB textures, animation clips, morph targets, or the original skin weights. Review the compatibility report before exporting.'});return w;}
+
+  function parseOBJ(text){
+    const vertices=[],texcoords=[],normals=[],triangles=[],materials=new Set();let material='default',invalidFaces=0;
+    const lines=text.split(/\r?\n/);
+    const resolveIndex=(raw,count)=>{const n=Number(raw);if(!Number.isInteger(n)||n===0)return -1;return n>0?n-1:count+n;};
+    for(let li=0;li<lines.length;li++){
+      const line=lines[li].trim();if(!line||line[0]==='#')continue;
+      const parts=line.split(/\s+/),cmd=parts[0];
+      if(cmd==='v'&&parts.length>=4){const v=parts.slice(1,4).map(Number);if(v.every(Number.isFinite))vertices.push(v);}
+      else if(cmd==='vt'&&parts.length>=3){const uv=parts.slice(1,3).map(Number);if(uv.every(Number.isFinite))texcoords.push(uv);}
+      else if(cmd==='vn'&&parts.length>=4){const n=parts.slice(1,4).map(Number);if(n.every(Number.isFinite))normals.push(n);}
+      else if(cmd==='usemtl'){material=parts.slice(1).join(' ')||'default';materials.add(material);}
+      else if(cmd==='f'&&parts.length>=4){
+        const corners=parts.slice(1).map(token=>{const bits=token.split('/');return {v:resolveIndex(bits[0],vertices.length),vt:bits[1]?resolveIndex(bits[1],texcoords.length):-1,vn:bits[2]?resolveIndex(bits[2],normals.length):-1};});
+        if(corners.some(c=>c.v<0||c.v>=vertices.length||c.vt>=texcoords.length||c.vn>=normals.length)){invalidFaces++;continue;}
+        for(let k=1;k<corners.length-1;k++){const triCorners=[corners[0],corners[k],corners[k+1]];triangles.push({indices:triCorners.map(c=>c.v),corners:triCorners,material});}
+      }
+    }
+    return {vertices,texcoords,normals,triangles,materials,invalidFaces,bones:[],weightedVertices:0,sourceFormat:'OBJ',axis:'yup'};
+  }
+  function parseSMD(text){
+    const lines=text.split(/\r?\n/),nodes=new Map(),localPose=new Map(),vertices=[],vertexData=[],triangles=[],materials=new Set();
+    let section='',inTriangles=false,invalidTriangles=0,weightedVertices=0;
+    for(let i=0;i<lines.length;i++){
+      const raw=lines[i],line=raw.trim();if(!line)continue;
+      if(line==='nodes'){section='nodes';inTriangles=false;continue;}
+      if(line==='skeleton'){section='skeleton';inTriangles=false;continue;}
+      if(line==='triangles'){section='triangles';inTriangles=true;continue;}
+      if(line==='vertexanimation'){section='vertexanimation';inTriangles=false;continue;}
+      if(line==='end'){
+        if(inTriangles){inTriangles=false;section='';}
+        else if(section==='nodes'||section==='skeleton')section='';
+        continue;
+      }
+      if(section==='nodes'){
+        const m=line.match(/^(-?\d+)\s+"([^"]+)"\s+(-?\d+)\s*$/);if(m)nodes.set(Number(m[1]),{id:Number(m[1]),name:m[2],parent:Number(m[3])});
+      }else if(section==='skeleton'){
+        if(/^time\s+\d+/i.test(line)){if(/time\s+0\b/i.test(line))section='skeleton0';else if(section==='skeleton0')section='';continue;}
+      }else if(section==='skeleton0'){
+        const vals=line.split(/\s+/).map(Number);if(vals.length>=7&&vals.slice(0,7).every(Number.isFinite))localPose.set(vals[0],{position:vals.slice(1,4),rotation:vals.slice(4,7)});
+      }else if(section==='triangles'&&inTriangles){
+        // An SMD triangle block is: material line followed by exactly three vertex records.
+        const material=line;materials.add(material);const tri=[];let ok=true;
+        for(let k=0;k<3;k++){
+          i++;while(i<lines.length&&!lines[i].trim())i++;
+          if(i>=lines.length){ok=false;break;}
+          const v=parseSMDVertex(lines[i].trim());if(!v){ok=false;break;}
+          if(v.links.length>1)weightedVertices++;
+          const idx=vertices.length;vertices.push(v.position);vertexData.push({position:v.position,normal:v.normal,uv:v.uv,links:v.links,bone:v.bone});tri.push(idx);
+        }
+        if(ok)triangles.push({indices:tri,material});else invalidTriangles++;
+      }
+    }
+    const bones=buildWorldBones(nodes,localPose);
+    const referenced=new Set();
+    // Bone usage is collected from vertex lines separately, without retaining bulky per-vertex attributes.
+    for(const raw of lines){const line=raw.trim();if(!line||/^\d+\s+"/.test(line)||/^time\s/.test(line)||/^(version|nodes|skeleton|triangles|vertexanimation|end)$/.test(line))continue;const v=parseSMDVertex(line);if(v) v.links.forEach(x=>referenced.add(x.bone));}
+    return {vertices,vertexData,triangles,materials,bones,localPose,weightedVertices,referencedBones:referenced,invalidTriangles,sourceFormat:'SMD',axis:'zup'};
+  }
+  function parseSMDVertex(line){
+    const t=line.trim().split(/\s+/);if(t.length<9)return null;const n=t.slice(0,9).map(Number);if(!n.every(Number.isFinite))return null;
+    const bone=Math.trunc(n[0]),position=n.slice(1,4);let links=[{bone,weight:1}];
+    if(t.length>=10){const count=Number(t[9]);if(Number.isInteger(count)&&count>=1&&count<=16&&t.length>=10+count*2){links=[];for(let i=0;i<count;i++){const b=Number(t[10+i*2]),w=Number(t[11+i*2]);if(Number.isInteger(b)&&Number.isFinite(w))links.push({bone:b,weight:w});}}}
+    return {bone,position,normal:n.slice(4,7),uv:n.slice(7,9),links};
+  }
+  function mat3Mul(a,b){const o=Array(9).fill(0);for(let r=0;r<3;r++)for(let c=0;c<3;c++)for(let k=0;k<3;k++)o[r*3+c]+=a[r*3+k]*b[k*3+c];return o;}
+  function eulerMat(r){const [x,y,z]=r.map(Number),cx=Math.cos(x),sx=Math.sin(x),cy=Math.cos(y),sy=Math.sin(y),cz=Math.cos(z),sz=Math.sin(z);const rx=[1,0,0,0,cx,-sx,0,sx,cx],ry=[cy,0,sy,0,1,0,-sy,0,cy],rz=[cz,-sz,0,sz,cz,0,0,0,1];return mat3Mul(mat3Mul(rz,ry),rx);}
+  function mat3Vec(m,v){return [m[0]*v[0]+m[1]*v[1]+m[2]*v[2],m[3]*v[0]+m[4]*v[1]+m[5]*v[2],m[6]*v[0]+m[7]*v[1]+m[8]*v[2]];}
+  function buildWorldBones(nodes,pose){
+    const out=new Map(),visiting=new Set();
+    function visit(id){if(out.has(id))return out.get(id);const node=nodes.get(id);if(!node)return null;if(visiting.has(id))return null;visiting.add(id);const local=pose.get(id)||{position:[0,0,0],rotation:[0,0,0]},localR=eulerMat(local.rotation);let wp=local.position.slice(),wr=localR;
+      if(node.parent!==-1&&nodes.has(node.parent)){const parent=visit(node.parent);if(parent){const delta=mat3Vec(parent.rotation,local.position);wp=parent.position.map((x,i)=>x+delta[i]);wr=mat3Mul(parent.rotation,localR);}}
+      const result={...node,position:wp,rotation:wr,localPosition:local.position,localRotation:local.rotation};out.set(id,result);visiting.delete(id);return result;}
+    for(const id of nodes.keys())visit(id);return [...out.values()];
+  }
+  function parseQC(text){
+    const q={modelname:null,bodies:[],sequences:[],hitboxes:[],directives:[],lineCount:text.split(/\r?\n/).length};
+    for(const raw of text.split(/\r?\n/)){const line=raw.replace(/\/\/.*$/,'').trim();if(!line||!line.startsWith('$'))continue;const m=line.match(/^\$(\w+)\s*(.*)$/);if(!m)continue;const directive=m[1].toLowerCase(),args=m[2].trim();q.directives.push({directive,args});if(directive==='modelname')q.modelname=args.replace(/^"|"$/g,'');if(['body','bodygroup','bodygroupname'].includes(directive))q.bodies.push({directive,args});if(directive==='sequence')q.sequences.push(args);if(directive==='hitbox'||directive==='hitboxset')q.hitboxes.push(args);}
+    return q;
+  }
+  function validateSMD(m){const w=[];if(m.triangles.length>4080)w.push({level:'warn',text:`${m.triangles.length.toLocaleString()} triangles exceed the commonly cited 4,080-triangle classic SMD limit. Confirm compiler/version and split geometry if needed.`});if(m.bones.length>128)w.push({level:'error',text:`${m.bones.length} nodes exceed the commonly cited 128-bone classic GoldSrc limit.`});if(m.invalidTriangles)w.push({level:'error',text:`${m.invalidTriangles} triangle block(s) could not be parsed completely.`});const ids=new Set(m.bones.map(b=>b.id));const missing=[...m.referencedBones].filter(id=>!ids.has(id));if(missing.length)w.push({level:'error',text:`Vertex records refer to missing node IDs: ${missing.slice(0,16).join(', ')}${missing.length>16?'…':''}.`});if(m.weightedVertices)w.push({level:'warn',text:`${m.weightedVertices} vertex record(s) contain multiple links/weights. Classic GoldSrc workflows commonly require rigid assignments; confirm how your compiler handles these weights.`});if(!m.bones.length)w.push({level:'warn',text:'No node hierarchy was found in this SMD. A triangle-only reference mesh can display but is not a complete rig.'});if(!w.length)w.push({level:'ok',text:'No obvious structural issues detected by the browser parser. This is not a compiler validation.'});return w;}
+  function validateQC(q){const w=[];if(!q.modelname)w.push({level:'warn',text:'No $modelname directive found.'});if(!q.bodies.length)w.push({level:'warn',text:'No $body/$bodygroup directive found; verify the QC references a body model.'});if(!q.sequences.length)w.push({level:'warn',text:'No $sequence directives found. Player animation compatibility must be checked against the target model.'});if(q.sequences.length===1)w.push({level:'warn',text:'Only one sequence directive found. A usable Sven Co-op player generally needs the expected animation sequence set.'});if(!w.length)w.push({level:'ok',text:'QC directives parsed. File references, sequence semantics, and compiler compatibility still need external validation.'});return w;}
+  function addAnalysisMessage(text,level='warn'){showAnalysis('FILE',null,[{level,text}]);}
+  function showAnalysis(kind,data,warnings){
+    $('analysisPanel').style.display='block';$('analysisState').textContent=`${kind} · LOCAL`;const stats=$('analysisStats');stats.replaceChildren();
+    const items=[];
+    if(data&&kind==='OBJ')items.push([''+data.vertices.length.toLocaleString(),'Vertices'],[''+data.triangles.length.toLocaleString(),'Triangles'],[String(data.materials.size),'Materials'],[String(data.invalidFaces||0),'Invalid faces']);
+    else if(data&&kind==='SMD')items.push([''+data.vertices.length.toLocaleString(),'Vertex records'],[''+data.triangles.length.toLocaleString(),'Triangles'],[String(data.bones.length),'Nodes / bones'],[String(data.materials.size),'Materials']);
+    else if(data&&kind==='GLB')items.push([''+data.vertices.length.toLocaleString(),'Vertices'],[''+data.triangles.length.toLocaleString(),'Triangles'],[String(data.bones.length),'Skin joints'],[String(data.materials.size),'Materials']);
+    else if(data&&kind==='QC')items.push([data.modelname||'Not set','Model name'],[String(data.sequences.length),'Sequences'],[String(data.bodies.length),'Body directives'],[String(data.hitboxes.length),'Hitbox directives']);
+    else items.push(['—','Geometry'],['—','Bones'],['—','Materials'],['—','Compiler']);
+    items.forEach(([value,label])=>{const div=document.createElement('div');div.className='analysis-stat';const strong=document.createElement('strong');strong.textContent=value;const small=document.createElement('span');small.textContent=label;div.append(strong,small);stats.appendChild(div);});
+    const list=$('analysisWarnings');list.replaceChildren();(warnings||[]).forEach(w=>{const div=document.createElement('div');div.className='analysis-warning '+(w.level==='error'?'error':w.level==='ok'?'ok':'');div.textContent=(w.level==='error'?'ERROR · ':w.level==='ok'?'OK · ':'CHECK · ')+w.text;list.appendChild(div);});
+    $('meshSettings').style.display=(kind==='OBJ'||kind==='SMD'||kind==='GLB')?'grid':'none';if(kind==='SMD'||kind==='GLB')$('meshImportedBones').checked=true;
+  }
+  function setViewportMode(mode){
+    const wantsMesh=mode==='mesh'&&!!meshData;meshViewActive=wantsMesh;
+    $('rigSvg').style.display=wantsMesh?'none':'';meshCanvas.style.display=wantsMesh?'block':'none';$('meshHint').style.display=wantsMesh?'block':'none';$('rigView').classList.toggle('selected',!wantsMesh);$('meshView').classList.toggle('selected',wantsMesh);
+    $('viewportHint').textContent=wantsMesh?'DRAG TO ORBIT · SCROLL TO ZOOM':'DRAG MARKERS TO ADJUST · SYMMETRY AVAILABLE';$('viewportTitle').textContent=wantsMesh?'IMPORTED GEOMETRY · LOCAL PREVIEW':'REFERENCE POSE · HUMANOID';$('viewportStats').innerHTML=wantsMesh?`MESH PREVIEW<br/>${meshData.triangles.length.toLocaleString()} TRIANGLES`:'12 JOINTS · 13 BONES<br/>SKELETON PREVIEW';$('jointLegend').style.display=wantsMesh?'none':'flex';
+    const label=document.querySelector('.viewer-label');if(label)label.innerHTML=`<span class="tiny-dot"></span> VIEWPORT <span style="color:#536365;font-weight:500">/</span> ${wantsMesh?'3D MESH PREVIEW':'FRONT ORTHO RIG'}`;
+    if(wantsMesh)drawMesh();
+  }
+  function axisPoint(v){const axis=$('meshAxis')?.value||'auto',up=axis==='auto'?(meshData?.axis||'zup'):axis;if(up==='yup')return [v[0],-v[2],v[1]];return [v[0],v[1],v[2]];}
+  function boundsFor(points){const lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];for(const p of points)for(let a=0;a<3;a++){lo[a]=Math.min(lo[a],p[a]);hi[a]=Math.max(hi[a],p[a]);}if(!points.length)return {lo:[-1,-1,0],hi:[1,1,2]};return {lo,hi};}
+  function rotatePoint(p){const ca=Math.cos(meshCamera.azimuth),sa=Math.sin(meshCamera.azimuth),ce=Math.cos(meshCamera.elevation),se=Math.sin(meshCamera.elevation);const x=p[0]*ca-p[1]*sa,y=p[0]*sa+p[1]*ca;return [x,y*ce-p[2]*se,y*se+p[2]*ce];}
+  function drawMesh(){
+    if(!meshViewActive||!meshData||!meshCtx)return;const rect=meshCanvas.getBoundingClientRect();if(rect.width<2||rect.height<2)return;const dpr=Math.min(window.devicePixelRatio||1,2);meshCanvas.width=Math.round(rect.width*dpr);meshCanvas.height=Math.round(rect.height*dpr);meshCtx.setTransform(dpr,0,0,dpr,0,0);const ctx=meshCtx,w=rect.width,h=rect.height;ctx.clearRect(0,0,w,h);
+    const points=meshData.vertices.map(axisPoint),bonePoints=(meshData.bones||[]).map(b=>axisPoint(b.position));const bounds=boundsFor([...points,...bonePoints]);const center=bounds.lo.map((v,i)=>(v+bounds.hi[i])/2);const dims=bounds.hi.map((v,i)=>v-bounds.lo[i]);const maxDim=Math.max(...dims,0.0001);const scale=Math.min(w*.77,h*.79)/maxDim*meshCamera.zoom;
+    const transform=p=>{const rotated=rotatePoint(p.map((v,i)=>v-center[i]));return {x:w/2+rotated[0]*scale+meshCamera.panX,y:h/2-rotated[2]*scale+meshCamera.panY,d:rotated[1],r:rotated};};
+    const projected=points.map(transform);const palette=new Map();for(const t of meshData.triangles){if(!palette.has(t.material)){let hash=0;for(const c of t.material)hash=(hash*31+c.charCodeAt(0))|0;palette.set(t.material,Math.abs(hash)%360);}}
+    const light=[-.28,-.45,.85],len=Math.hypot(...light);for(let i=0;i<3;i++)light[i]/=len;
+    const drawTris=(meshData.triangles||[]).map(t=>{const pp=t.indices.map(i=>projected[i]);if(pp.some(v=>!v))return null;const A=pp[0].r,B=pp[1].r,C=pp[2].r;const u=B.map((v,i)=>v-A[i]),v=C.map((q,i)=>q-A[i]);const n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]],nl=Math.hypot(...n)||1;for(let i=0;i<3;i++)n[i]/=nl;const shade=Math.max(.22,Math.min(1,.42+.58*Math.abs(n.reduce((s,q,i)=>s+q*light[i],0))));return {pp,depth:(pp[0].d+pp[1].d+pp[2].d)/3,hue:palette.get(t.material)||165,shade};}).filter(Boolean).sort((a,b)=>a.depth-b.depth);
+    for(const t of drawTris){ctx.beginPath();ctx.moveTo(t.pp[0].x,t.pp[0].y);ctx.lineTo(t.pp[1].x,t.pp[1].y);ctx.lineTo(t.pp[2].x,t.pp[2].y);ctx.closePath();ctx.fillStyle=`hsl(${t.hue} 20% ${Math.round(23+t.shade*30)}%)`;ctx.fill();if($('meshWireframe')?.checked){ctx.strokeStyle='rgba(196,219,210,.36)';ctx.lineWidth=.65;ctx.stroke();}}
+    if($('meshImportedBones')?.checked&&meshData.bones?.length){const map=new Map(meshData.bones.map(b=>[b.id,b]));ctx.lineCap='round';for(const b of meshData.bones){if(b.parent<0||!map.has(b.parent))continue;const a=transform(axisPoint(map.get(b.parent).position)),q=transform(axisPoint(b.position));ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle='#c7f36b';ctx.lineWidth=1.5;ctx.stroke();ctx.beginPath();ctx.arc(q.x,q.y,2.4,0,Math.PI*2);ctx.fillStyle='#f3d463';ctx.fill();}}
+    if(!drawTris.length&&!meshData.bones?.length){ctx.fillStyle='#aebbb9';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('No renderable geometry found',w/2,h/2);}
+  }
+  $('rigView').addEventListener('click',()=>setViewportMode('rig'));
+  $('meshView').addEventListener('click',()=>{if(!meshData){toast('Import an OBJ, SMD or GLB file to enable mesh preview.');return;}setViewportMode('mesh');});
+  $('meshAxis').addEventListener('change',drawMesh);$('meshWireframe').addEventListener('change',drawMesh);$('meshImportedBones').addEventListener('change',drawMesh);
+  meshCanvas.addEventListener('pointerdown',e=>{meshDrag={x:e.clientX,y:e.clientY,azimuth:meshCamera.azimuth,elevation:meshCamera.elevation,panX:meshCamera.panX,panY:meshCamera.panY,button:e.button,shift:e.shiftKey};meshCanvas.setPointerCapture(e.pointerId);e.preventDefault();});
+  meshCanvas.addEventListener('pointermove',e=>{if(!meshDrag)return;const dx=e.clientX-meshDrag.x,dy=e.clientY-meshDrag.y;if(meshDrag.shift||meshDrag.button===1){meshCamera.panX=meshDrag.panX+dx;meshCamera.panY=meshDrag.panY+dy;}else{meshCamera.azimuth=meshDrag.azimuth+dx*.009;meshCamera.elevation=clamp(meshDrag.elevation+dy*.008,-1.35,1.35);}drawMesh();});
+  const endMeshDrag=()=>meshDrag=null;meshCanvas.addEventListener('pointerup',endMeshDrag);meshCanvas.addEventListener('pointercancel',endMeshDrag);
+  meshCanvas.addEventListener('wheel',e=>{e.preventDefault();meshCamera.zoom=clamp(meshCamera.zoom*Math.exp(-e.deltaY*.001),.15,12);drawMesh();},{passive:false});
+  window.addEventListener('resize',()=>drawMesh());
+  const referenceImage = $('referenceImage');
+  const referenceControls = ['referenceOpacity','referenceScale','referenceX','referenceY','toggleReference','fitReference'];
+  function updateReferenceTransform(){
+    const scale=Number($('referenceScale').value)/100,ox=Number($('referenceX').value),oy=Number($('referenceY').value);
+    const width=360*scale,height=530*scale;
+    referenceImage.setAttribute('x',String(250-width/2+ox));referenceImage.setAttribute('y',String(325-height/2+oy));
+    referenceImage.setAttribute('width',String(width));referenceImage.setAttribute('height',String(height));
+    referenceImage.setAttribute('opacity',String(Number($('referenceOpacity').value)/100));
+    $('referenceOpacityValue').textContent=$('referenceOpacity').value+'%';$('referenceScaleValue').textContent=$('referenceScale').value+'%';
+    $('referenceXValue').textContent=$('referenceX').value;$('referenceYValue').textContent=$('referenceY').value;
+  }
+  function enableReferenceControls(enabled){referenceControls.forEach(id=>$(id).disabled=!enabled);}
+  function clearReference(){
+    if(referenceUrl)URL.revokeObjectURL(referenceUrl);referenceUrl=null;referenceFile=null;referenceDimensions=null;referenceVisible=true;
+    referenceImage.removeAttribute('href');referenceImage.setAttribute('visibility','hidden');
+    $('referenceFile').value='';$('referenceCard').style.display='none';$('referenceDropzone').style.display='flex';$('referenceStatus').textContent='No image';$('referenceHint').textContent='Reference pictures stay local. Their file is included in the all-in-one project ZIP; JSON records the image name and adjustment settings.';
+    $('modelSilhouette').setAttribute('opacity','.94');enableReferenceControls(false);toast('Reference image cleared.');
+  }
+  function importReference(file){
+    if(!file)return;
+    if(!file.type.startsWith('image/')){toast('Choose a valid image file.');return;}
+    if(file.size>20*1024*1024){toast('Reference images must be 20 MB or smaller.');return;}
+    if(referenceUrl)URL.revokeObjectURL(referenceUrl);
+    referenceFile=file;referenceUrl=URL.createObjectURL(file);referenceVisible=true;referenceDimensions=null;
+    referenceImage.setAttribute('href',referenceUrl);referenceImage.setAttribute('visibility','visible');
+    $('referenceName').textContent=file.name;$('referenceInfo').textContent=`${formatBytes(file.size)} · Local image`;$('referenceCard').style.display='flex';$('referenceDropzone').style.display='none';$('referenceStatus').textContent='Image loaded';$('toggleReference').textContent='Hide reference';enableReferenceControls(true);
+    $('modelSilhouette').setAttribute('opacity','.3');updateReferenceTransform();
+    const probe=new Image();probe.onload=()=>{if(referenceFile===file){referenceDimensions={width:probe.naturalWidth,height:probe.naturalHeight};$('referenceInfo').textContent=`${formatBytes(file.size)} · ${probe.naturalWidth} × ${probe.naturalHeight}px`;}};probe.onerror=()=>{$('referenceHint').textContent='The image was selected, but the browser could not read its dimensions.';};probe.src=referenceUrl;
+    $('referenceHint').textContent='Reference loaded locally. Adjust opacity, scale and offset until the guide aligns with the model silhouette and joint markers.';
+    setStatus(`<strong>Reference image imported.</strong> Align it to the marker guide before exporting the setup.`);toast('Reference image imported locally.');
+  }
+  $('referenceFile').addEventListener('change',e=>importReference(e.target.files?.[0]));
+  $('removeReference').addEventListener('click',clearReference);
+  $('referenceOpacity').addEventListener('input',updateReferenceTransform);$('referenceScale').addEventListener('input',updateReferenceTransform);$('referenceX').addEventListener('input',updateReferenceTransform);$('referenceY').addEventListener('input',updateReferenceTransform);
+  $('toggleReference').addEventListener('click',()=>{if(!referenceFile)return;referenceVisible=!referenceVisible;referenceImage.setAttribute('visibility',referenceVisible?'visible':'hidden');$('toggleReference').textContent=referenceVisible?'Hide reference':'Show reference';$('referenceStatus').textContent=referenceVisible?'Image loaded':'Hidden';toast(referenceVisible?'Reference shown.':'Reference hidden.');});
+  $('fitReference').addEventListener('click',()=>{$('referenceOpacity').value='60';$('referenceScale').value='100';$('referenceX').value='0';$('referenceY').value='0';updateReferenceTransform();toast('Reference fit reset.');});
+  $('referenceDropzone').addEventListener('dragover',e=>{e.preventDefault();$('referenceDropzone').classList.add('dragover');});$('referenceDropzone').addEventListener('dragleave',()=> $('referenceDropzone').classList.remove('dragover'));$('referenceDropzone').addEventListener('drop',e=>{e.preventDefault();$('referenceDropzone').classList.remove('dragover');importReference(e.dataTransfer?.files?.[0]);});
+  $('modelFile').addEventListener('change',(e)=>handleFile(e.target.files?.[0]));$('removeFile').addEventListener('click',()=>{loadedFile=null;$('modelFile').value='';$('filecard').style.display='none';$('dropzone').style.display='flex';$('fileStatus').textContent='No file loaded';$('fileHint').textContent='For compiled GoldSrc .mdl files, decompile to SMD/QC first for editing in a standard toolchain.';meshData=null;qcData=null;meshParsedFor=null;$('analysisPanel').style.display='none';setViewportMode('rig');updatePipelineControls();setPipelineStatus('Model removed. Import an OBJ, SMD or GLB to enable reference SMD generation.');toast('Model input removed.');});
+  const dropTargets=[$('dropzone'),$('dropViewport')];dropTargets.forEach(target=>{target.addEventListener('dragover',(e)=>{e.preventDefault();$('dropzone').classList.add('dragover');});target.addEventListener('dragleave',()=> $('dropzone').classList.remove('dragover'));target.addEventListener('drop',(e)=>{e.preventDefault();$('dropzone').classList.remove('dragover');const file=e.dataTransfer?.files?.[0];if(file){if(file.type.startsWith('image/'))importReference(file);else handleFile(file);}});});
+  $('openPipeline').addEventListener('click',()=>{ $('integratedPipeline').scrollIntoView({behavior:'smooth',block:'start'});setPipelineStatus('The export pipeline, Blender bridge source, QC scaffold, SMD generator, and ZIP packager are built into this page.','ok'); });
+  document.querySelectorAll('.nav button').forEach((button)=>{
+    const label=button.querySelector('.label')?.textContent?.trim()||'';
+    button.addEventListener('click',()=>{
+      document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+      button.classList.add('active');
+      const targets={Overview:document.querySelector('.heading'),Assets:$('modelInputPanel'),'Rig Studio':document.querySelector('.viewer-shell'),Exports:$('integratedPipeline'),'Sven Co-op':$('knownsPanel'),Preferences:$('rigConfigurationPanel'),Animations:$('integratedPipeline')};
+      const target=targets[label];if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+      if(label==='Animations'){setPipelineStatus('Animation editing and retargeting are not implemented here. This page builds a reference SMD/QC scaffold; preserve the original player animation sequences in your full toolchain.','warn');}
+    });
+  });
+  window.addEventListener('keydown',(e)=>{if(e.key==='Escape')closeModal();if(e.key==='r'&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))reset();});
+  $('height').addEventListener('change',()=>{const h=Number($('height').value);if(!Number.isFinite(h)||h<.1||h>5){$('height').value='1.80';toast('Height must be between 0.1 m and 5 m.');}});
+  render();
+  $('bridgePreview').value=$('blenderBridgeSource').textContent.replace(/^\n|\n$/g,'');
+  updatePipelineControls();
+})();
+</script>
+</body>
+</html>
